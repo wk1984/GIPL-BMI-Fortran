@@ -67,7 +67,6 @@ module thermo
     real, allocatable :: n_bnd_lay(:,:) ! number of boundaries between layer in soil
     integer k0
 
-
     integer, allocatable :: snow_code(:), veg_code(:) ! (not necccessary) required for runing in parallel
     integer, allocatable :: geo_code(:), gt_zone_code(:) ! (not necccessary) required for runing in parallel
     real*8, allocatable :: temp_grd(:) ! temprature gradient at the lower boundary
@@ -98,6 +97,59 @@ module alt
     real*8, allocatable :: z_frz_frn(:,:,:) ! depth of the freezing front
 end module alt
 
+module gipl_model
+
+!    implicit none
+
+    type :: gipl_model_type
+        
+       ! copy from bnd
+
+    integer :: n_temp ! number of upper boundary points for temperature (input)
+    real*8, allocatable :: utemp_time(:), utemp(:,:) ! upper boundary time and temperature (input)
+    real*8, allocatable :: utemp_time_i(:), utemp_i(:,:) ! time and upper boundary temprature (interpolated)
+    integer :: n_snow ! number of upper boundary points for snow (input)
+    real*8, allocatable :: snd_time(:), snd(:,:) ! upper boundary snow time and snow depth (input)
+    integer :: n_stcon
+    real*8, allocatable :: stcon_time(:), stcon(:,:) ! snow thermal conductivity time and itself (input)
+    real*8, allocatable :: snd_i(:,:), stcon_i(:,:) ! snow depth and thermal conductivity (interpolated)
+    real*8 :: TINIR
+    real*8 :: time_restart ! restart time in restart file
+    integer, allocatable :: idx_site(:)
+
+    ! Parameter read from cmd file
+    integer :: restart ! 0/1 start from previous time step / start from the begining
+    real*8 :: time_step ! step is the timestep in the example it is 1 yr
+    real*8 :: TAUM ! taum is the convergence parameter used by the stefan subroutine
+    real*8 :: TMIN ! tmin minimal timestep used in the Stefan subroutine
+    real*8 :: time_beg, time_end ! inbegin time, end time
+    integer :: itmax ! maximum number of iterations in Stefan subroutine
+    integer :: n_time ! number of time steps that temp will be averaged over
+    integer :: n_frz_max ! maximum number of freezing fronts
+    real*8 :: smooth_coef ! smoothing factor
+    real*8 :: unf_water_coef ! unfrozen water coefficient
+    real*8 :: n_sec_day ! number of second in a day
+    real*8 :: frz_frn_max, frz_frn_min ! freezing front min and max depth [meters]
+    real*8 :: sat_coef ! saturation coefficient [dimensionless, fraction of 1]
+    
+    ! copy from grid
+    
+    integer, allocatable :: n_lay_cur(:) ! current number of soil layers <= n_lay
+    ! calclulated as a sum of organic and mineral soil layers
+    integer :: n_site ! number of sites
+    integer :: n_grd ! total number of grid points with depth (grid.txt)
+    real*8, allocatable :: zdepth(:), dz(:) ! vertical grid and distance between grid point 'zdepth(n_grd)'
+    integer, allocatable :: lay_id(:,:) ! layer index
+    integer :: m_grd ! number of grid points to store in res file
+    integer, allocatable :: zdepth_id(:) ! index vector of stored grid points 'zdepth_id(m_grid)'
+    integer :: n_ini ! number of vertical grid cells in init file
+    real*8, allocatable :: zdepth_ini(:), ztemp_ini(:,:) ! depth and correspoding initial temperature (time=0) 'zdepth_ini(n_ini)'
+    character(210) :: FMT1, FMT2 ! results formating type
+
+    end type gipl_model_type
+
+contains
+
 subroutine run_model
     use const
     use bnd
@@ -105,9 +157,9 @@ subroutine run_model
     use grd
     use alt
 
-    use omp_lib
-
     implicit none
+    
+    type(gipl_model_type)::model
 
     ! variables
     real*8 :: res_save(m_grd + 3, n_site) ! save results into 2D array
@@ -137,14 +189,14 @@ subroutine run_model
             call save_results(i_site, time_cur(i_site), time_loop(i_site))
             6666 continue
             !do while (i_time(i_site).LT.n_time)
-            call stefan1D(temp(i_site,:), n_grd, dz, time_loop(i_site), i_site, lay_id(i_site,:), &
+            call stefan1D(model, temp(i_site,:), n_grd, dz, time_loop(i_site), i_site, lay_id(i_site,:), &
             temp_grd(i_site))
             time_loop(i_site) = time_loop(i_site) + time_step
             time_cur(i_site) = time_loop(i_site) + time_restart
             if (i_time(i_site) .LT. n_time) then
                 i_time(i_site) = i_time(i_site) + 1
                 call save_results(i_site, time_cur(i_site), time_loop(i_site))
-                call active_layer(i_site)
+                call active_layer(model, i_site)
                 GOTO 6666
             endif
             !enddo
@@ -179,7 +231,7 @@ subroutine run_model
 
             dfrz_frn = z_frz_frn(:, 1, i_site)
             call save_results(i_site, time_cur(i_site), time_loop(i_site))
-            call active_layer(i_site)
+            call active_layer(model, i_site)
 
             !____WRITTING MEAN
             write(2, FMT2) i_site, (res_save(i_grd, i_site)/DBLE(n_time), i_grd = 1, m_grd + 3), &
@@ -189,7 +241,7 @@ subroutine run_model
             enddo
             call interpolate(utemp_time, utemp(:, i_site), n_temp, utemp_time_i, utemp_i(:, i_site), n_time + 2)
             call interpolate(snd_time, snd(:, i_site), n_snow, utemp_time_i, snd_i(:, i_site), n_time + 2)
-            call snowfix(utemp_i(:, i_site), snd_i(:, i_site), n_time + 2)
+            call snowfix(model,utemp_i(:, i_site), snd_i(:, i_site), n_time + 2)
             call interpolate(stcon_time, stcon(:, i_site), n_stcon, utemp_time_i, stcon_i(:, i_site), n_time + 2)
         enddo
 
@@ -198,14 +250,17 @@ subroutine run_model
 
 end subroutine run_model
 
-subroutine initialize(fconfig)
+subroutine initialize(model, fconfig)
+    
     use const
     use bnd
     use thermo
     use grd
     use alt
-
+    
     implicit none
+    
+    type(gipl_model_type)::model
 
     integer IREAD, ierr
     integer :: i, j, k, z_num, i_grd, j_time, i_site, i_lay
@@ -277,6 +332,13 @@ subroutine initialize(fconfig)
     read(60, *) sat_coef
 
     close(60)
+    
+    ! pass values to model interface:
+    
+    model%n_sec_day = n_sec_day
+    model%restart   = restart
+    model%time_step = time_step
+    model%n_time    = n_time
 
     call filexist(file_sites)
     call filexist(file_bound)
@@ -305,6 +367,8 @@ subroutine initialize(fconfig)
     enddo
     close(60)
     !   print*, trim(file_sites),' has been read'
+    
+    model%n_site = n_site
 
     open(60, file = file_bound)
     read(60, *) n_temp
@@ -315,6 +379,15 @@ subroutine initialize(fconfig)
     enddo
     close(60)
     !   print*,trim(file_bound),' has been read'
+    
+    ! pass upper boundary to model interface
+    
+    allocate(model%utemp_time(n_temp), STAT = IERR)
+    allocate(model%utemp(n_temp, n_site), STAT = IERR)  
+    
+    model%n_temp     = n_temp
+    model%utemp_time = utemp_time
+    model%utemp      = utemp
 
     open(60, file = file_rsnow)
     read(60, *) n_stcon
@@ -326,6 +399,15 @@ subroutine initialize(fconfig)
     close(60)
     !   print*,trim(file_rsnow),' has been read'
 
+    ! pass upper boundary to model interface
+    
+    allocate(model%stcon_time(n_stcon), STAT = IERR)
+    allocate(model%stcon(n_stcon, n_site), STAT = IERR)  
+    
+    model%n_stcon     = n_stcon
+    model%stcon_time = stcon_time
+    model%stcon      = stcon
+    
     open(60, file = file_snow)
     read(60, *) n_snow
     allocate(snd_time(n_snow), STAT = IERR)
@@ -335,6 +417,15 @@ subroutine initialize(fconfig)
     enddo
     close(60)
     !   print*,trim(file_snow),' has been read'
+    
+        ! pass upper boundary to model interface
+    
+    allocate(model%snd_time(n_snow), STAT = IERR)
+    allocate(model%snd(n_snow, n_site), STAT = IERR)  
+    
+    model%n_snow     = n_snow
+    model%snd_time   = snd_time
+    model%snd        = snd
 
     open(60, file = file_init, action = 'read')
     read(60, *) z_num, n_ini!,time_restart
@@ -347,6 +438,13 @@ subroutine initialize(fconfig)
     enddo
     close(60)
     !   print*,trim(file_init),'has been read'
+    
+    allocate(model%zdepth_ini(n_ini), STAT = IERR)
+    allocate(model%ztemp_ini(n_ini, n_site), STAT = IERR)  
+    
+    model%n_ini       = n_ini
+    
+    
 
     time_restart = utemp_time(1)
     zdepth_ini(:) = gtzone(:, 1)
@@ -354,7 +452,10 @@ subroutine initialize(fconfig)
         k = gt_zone_code(i)
         ztemp_ini(:, I) = gtzone(:, k + 1)
     enddo
-
+    
+    model%zdepth_ini  = zdepth_ini
+    model%ztemp_ini   = ztemp_ini
+    
     open(60, file = file_grid)
     read(60, *) n_grd
     allocate(zdepth(n_grd), STAT = IERR)
@@ -369,6 +470,15 @@ subroutine initialize(fconfig)
     close(60)
     !   print*,trim(file_grid),' has been read'
 
+    model%n_grd = n_grd
+    model%m_grd = m_grd
+    
+    allocate(model%zdepth(n_grd), STAT = IERR)
+    allocate(model%zdepth_id(m_grd), STAT = IERR)
+    
+    model%zdepth = zdepth
+    model%zdepth_id = zdepth_id
+    
     ! note: that all max n_lay_cur layers has to be read or it will a give segmantation error
     !      n_lay=10!MAXVAL(n_lay_cur)
     !----------------------------------------------------      
@@ -490,7 +600,7 @@ subroutine initialize(fconfig)
     hcap_s = hcap_snow * hcscale
     L_fus = hcscale * Lf
     call assign_layer_id(n_lay, n_lay_cur, n_site, n_grd, zdepth, n_bnd_lay, lay_id)
-    call init_cond(restart, n_site)
+    call init_cond(model, restart, n_site)
 
     allocate(utemp_time_i(n_time + 2), STAT = IERR) ! allocating interval varialbe after interation
     allocate(utemp_i(n_time + 2, n_site), STAT = IERR)
@@ -507,9 +617,9 @@ subroutine initialize(fconfig)
         enddo
         call interpolate(utemp_time, utemp(:, i_site), n_temp, utemp_time_i, utemp_i(:, i_site), n_time + 2)
         call interpolate(snd_time, snd(:, i_site), n_snow, utemp_time_i, snd_i(:, i_site), n_time + 2)
-        call snowfix(utemp_i(:, i_site), snd_i(:, i_site), n_time + 2)
+        call snowfix(model, utemp_i(:, i_site), snd_i(:, i_site), n_time + 2)
         call interpolate(stcon_time, stcon(:, i_site), n_stcon, utemp_time_i, stcon_i(:, i_site), n_time + 2)
-        call active_layer(i_site)
+        call active_layer(model, i_site)
     enddo
 
     open(1, file = trim(adjustl(result_file)) // '.txt', STATUS = 'unknown')
@@ -521,11 +631,13 @@ subroutine initialize(fconfig)
 
 end subroutine initialize
 
-subroutine finalize
+subroutine finalize(model)
 
     use bnd
     use thermo
     use grd
+    
+    type(gipl_model_type)::model
 
     rewind(3) ! -------------start file writting begin
     write(3, *) time_restart
@@ -539,13 +651,16 @@ subroutine finalize
 
 end subroutine finalize
 
-subroutine init_cond(q, last)
+subroutine init_cond(model, q, last)
 
     use bnd
     use thermo
     use grd
 
     implicit none
+    
+    type(gipl_model_type)::model
+    
     integer q, last
     integer i, j
     character*164 file_init
@@ -566,7 +681,7 @@ subroutine init_cond(q, last)
 
 end subroutine init_cond
 
-subroutine active_layer(k)
+subroutine active_layer(model, k)
 
     use bnd
     use thermo
@@ -574,6 +689,8 @@ subroutine active_layer(k)
     use alt
 
     implicit none
+    
+    type(gipl_model_type)::model
 
     integer :: k, j, jj
     real*8 GA, GB, YFRON, GX, GY
@@ -624,7 +741,8 @@ subroutine active_layer(k)
         enddo
 
     end subroutine save_results
-
+        
+end module gipl_model
     !________________________________________________
     !__________________FUNCTIONS_____________________
     !________________________________________________
@@ -713,6 +831,8 @@ subroutine active_layer(k)
     real*8 function futemp(T, I)
         use bnd
         implicit none
+        
+        
         real*8 T
         integer I, II
 
@@ -723,7 +843,7 @@ subroutine active_layer(k)
     end function futemp
     !----------------------------------------
     subroutine snowfix(air_temp, stcon, n)
-
+        
         real*8, intent (in) :: air_temp(n)
         real*8, intent (out) :: stcon(n)
         integer :: n
@@ -852,6 +972,7 @@ subroutine active_layer(k)
             use grd
 
             implicit real*8(A - H, O - Z)
+                        
             DIMENSION T(n_grd), WW(2), NN(2)
 
             li = lay_id(I, J) ! layer index
@@ -897,7 +1018,7 @@ subroutine active_layer(k)
             use const
 
             implicit none
-
+            
             integer, intent(inout) :: n_grd
             real*8, intent(inout) :: dz(n_grd), temps(n_grd)
             integer, intent(inout) :: lay_idx(n_grd)
@@ -1016,3 +1137,4 @@ subroutine active_layer(k)
             endif
         end subroutine filexist
         !-----------------------------------------------
+        
