@@ -1,47 +1,17 @@
-PROGRAM main
+program gipl2
+use bnd
+use thermo
+use grd
+use alt
 
-use snow_model
-type (snow_model_type) :: model
+real*8 :: run_time_start, run_time_final
 
-character*256 fconfig
+call cpu_time(run_time_start)
 
-INTEGER I
+call initialize('../data/gipl_config.cfg')
+call run_model
+call finalize
 
-real,allocatable :: snod(:), time(:)
+call cpu_time(run_time_final)
 
-IF (COMMAND_ARGUMENT_COUNT() .EQ. 0) THEN
-    fconfig = 'snow_model_test.cfg'
-ELSE
-    CALL GET_COMMAND_ARGUMENT(1, fconfig)
-ENDIF
-
-call initialize(model, fconfig)
-
-allocate(snod(MODEL % N_TIME_STEPS))
-allocate(time(MODEL % N_TIME_STEPS))
-
-print *, model % ICL, model % IOPEN, MODEL % PADJ, MODEL % SIXHRS
-
-open(301, file = 'snow.csv')
-
-!      print *, MODEL%N_TIME_STEPS
-
-DO i = 1, MODEL % N_TIME_STEPS
-    !      
-    call update(model)
-    
-    time(i) = MODEL%t
-    snod(I) = MODEL%NEW
-    !     
-    WRITE(301, '(F9.1,A1,F8.2,A1,F8.1)') MODEL % T, ',', MODEL % NEW, ',', &
-    MODEL % NEWP
-!    WRITE(*, '(F0.1,A1,F0.2,A1,F0.1)') MODEL % T, ',', MODEL % NEW, ',', &
-!    MODEL % NEWP
-    !      
-ENDDO
-
-close(301)
-
-call finalize(model)
-
-END
+end ! end of main program
