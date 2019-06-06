@@ -215,12 +215,12 @@ contains
         integer :: i_site, j_time, i_grd, i_lay
         integer :: ierr
 
-        time_s = time_step * DBLE(n_time * time_beg)
-        time_e = time_step * DBLE(n_time * time_end)
-        
-        i_time = 1
-        time_loop = 0.0D0
-        TINIR = 0.0D0
+!        time_s = time_step * DBLE(n_time * time_beg)
+!        time_e = time_step * DBLE(n_time * time_end)
+!        
+!        i_time = 1
+!        time_loop = 0.0D0
+!        TINIR = 0.0D0
 
         do while (time_loop(1) .LT. time_e)
             do i_site = 1, n_site
@@ -1217,7 +1217,7 @@ subroutine stefan1D(temps, n_grd, dz, time_loop, isite, lay_idx, flux)
         time_swith = -1.0
         GOTO 64
     endif
-
+   
     do i_grd = 2, n_grd - 1
         D = fapp_hcap(temp_o, isite, i_grd) / timei
         A = 2.D0 * ftcon(temp_o(i_grd), isite, i_grd, time_p) / (dz(i_grd) * (dz(i_grd) + dz(i_grd + 1)))
