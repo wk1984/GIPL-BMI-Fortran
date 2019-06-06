@@ -104,7 +104,7 @@ module gipl_model
     !    implicit none
 
     type :: gipl_model_type
-        
+
         real*8 :: top_run_time
 
         ! copy from const
@@ -210,19 +210,19 @@ contains
         real :: frz_up_time_cur ! freezeup time current (within a year)
         real :: frz_up_time_tot ! freezeup time global
         ! counters (time,steps)
-!        real*8 :: time_s, time_e ! internal start and end times
+        !        real*8 :: time_s, time_e ! internal start and end times
         real*8 :: time_loop(n_site) ! main looping time
         real*8 :: time_cur(n_site) ! current time (e.g. current day)
         ! other counters
         integer :: i_site, j_time, i_grd, i_lay
         integer :: ierr
 
-!        time_s = time_step * DBLE(n_time * time_beg)
-!        time_e = time_step * DBLE(n_time * time_end)
-!        
-!        i_time = 1
-!        time_loop = 0.0D0
-!        TINIR = 0.0D0
+        !        time_s = time_step * DBLE(n_time * time_beg)
+        !        time_e = time_step * DBLE(n_time * time_end)
+        !
+        !        i_time = 1
+        !        time_loop = 0.0D0
+        !        TINIR = 0.0D0
 
         do while (time_loop(1) .LT. time_e)
             do i_site = 1, n_site
@@ -306,39 +306,39 @@ contains
         real :: frz_up_time_cur ! freezeup time current (within a year)
         real :: frz_up_time_tot ! freezeup time global
         ! counters (time,steps)
-        
+
         real*8 :: time_loop(n_site) ! main looping time
         real*8 :: time_cur(n_site) ! current time (e.g. current day)
         ! other counters
         integer :: i_site, j_time, i_grd, i_lay
         integer :: ierr
-        
-        time_loop = model%top_run_time
-        
+
+        time_loop = model%top_run_time - 1
+
+        do i_site = 1, n_site
+
+            time_cur(i_site) = time_loop(i_site) + time_restart
+
+            call stefan1D(temp(i_site, :), n_grd, dz, time_loop(i_site), i_site, lay_id(i_site, :), &
+                    temp_grd(i_site))
+
+            time_loop(i_site) = time_loop(i_site) + time_step
+            time_cur(i_site) = time_loop(i_site) + time_restart
+
+            i_time(i_site) = i_time(i_site) + 1
+            call save_results(i_site, time_cur(i_site), time_loop(i_site))
+            model%temp = temp
+
+        enddo
+
+        if (time_s .LT. time_e.AND.time_loop(1) .GT. time_s)then
             do i_site = 1, n_site
-                
-                time_cur(i_site) = time_loop(i_site) + time_restart             
-                
-                call stefan1D(temp(i_site, :), n_grd, dz, time_loop(i_site), i_site, lay_id(i_site, :), &
-                        temp_grd(i_site))
-
-                time_loop(i_site) = time_loop(i_site) + time_step
-                time_cur(i_site) = time_loop(i_site) + time_restart
-
-                    i_time(i_site) = i_time(i_site) + 1
-                    call save_results(i_site, time_cur(i_site), time_loop(i_site))
-                    model%temp = temp
-
-            enddo
-
-            if (time_s .LT. time_e.AND.time_loop(1) .GT. time_s)then
-                do i_site = 1, n_site
-                    do j_time = int(model%top_run_time+1), int(model%top_run_time+1) ! WRITTING RESULTS
-                        write(1, FMT1) idx_site(i_site), (RES(j_time, i_grd), i_grd = 1, m_grd + 3)
-                    enddo
+                do j_time = int(model%top_run_time), int(model%top_run_time) ! WRITTING RESULTS
+                    write(1, FMT1) idx_site(i_site), (RES(j_time, i_grd), i_grd = 1, m_grd + 3)
                 enddo
-            endif
-    
+            enddo
+        endif
+
         model%top_run_time = model%top_run_time + 1
 
         model%RES = RES
@@ -730,50 +730,52 @@ contains
         time_e = time_step * DBLE(n_time * time_end)
 
         ! Initialize the results array
-        do i_site=1,n_site
+        do i_site = 1, n_site
             call save_results(i_site, 1.0D0, 0.0D0)
         enddo
 
         ! pass value to model interface
 
-        model%n_temp          = n_temp
-        model%utemp_time      = utemp_time
-        model%utemp           = utemp
+        model%n_temp = n_temp
+        model%utemp_time = utemp_time
+        model%utemp = utemp
 
-        model%n_stcon         = n_stcon
-        model%stcon_time      = stcon_time
-        model%stcon           = stcon
+        model%n_stcon = n_stcon
+        model%stcon_time = stcon_time
+        model%stcon = stcon
 
-        model%n_snow          = n_snow
-        model%snd_time        = snd_time
-        model%snd             = snd
+        model%n_snow = n_snow
+        model%snd_time = snd_time
+        model%snd = snd
 
-        model%n_ini           = n_ini
-        model%zdepth_ini      = zdepth_ini
-        model%ztemp_ini       = ztemp_ini
+        model%n_ini = n_ini
+        model%zdepth_ini = zdepth_ini
+        model%ztemp_ini = ztemp_ini
 
-        model%zdepth          = zdepth
-        model%zdepth_id       = zdepth_id
+        model%zdepth = zdepth
+        model%zdepth_id = zdepth_id
 
-        model%dz              = dz
-        model%temp            = temp
-        model%lay_id          = lay_id
-        model%temp_frz        = temp_frz
-        model%RES             = RES
-        model%n_lay_cur       = n_lay_cur
+        model%dz = dz
+        model%temp = temp
+        model%lay_id = lay_id
+        model%temp_frz = temp_frz
+        model%RES = RES
+        model%n_lay_cur = n_lay_cur
 
-        model%n_lay           = n_lay
+        model%n_lay = n_lay
 
-        model%vwc             = vwc
-        model%a_coef          = a_coef
-        model%b_coef          = b_coef
+        model%vwc = vwc
+        model%a_coef = a_coef
+        model%b_coef = b_coef
         model%EE = EE
-        model%hcap_frz        = hcap_frz
-        model%hcap_thw        = hcap_thw
-        model%tcon_frz        = tcon_frz
-        model%tcon_thw        = tcon_thw
-        model%n_lay_cur       = n_lay_cur
-        model%n_bnd_lay       = n_bnd_lay
+        model%hcap_frz = hcap_frz
+        model%hcap_thw = hcap_thw
+        model%tcon_frz = tcon_frz
+        model%tcon_thw = tcon_thw
+        model%n_lay_cur = n_lay_cur
+        model%n_bnd_lay = n_bnd_lay
+
+        model%top_run_time = 1 ! first simulation is 1, initial is 0.
 
     end subroutine initialize
 
@@ -1186,11 +1188,11 @@ subroutine stefan1D(temps, n_grd, dz, time_loop, isite, lay_idx, flux)
     real*8 :: time_p ! present time in a subroutine
     real*8 :: timei ! main subroutine timer
     real :: time_swith ! for timei
-    
+
     time_l = time_loop
     time_swith = -1.0
     timei = TAUM
-!    temps = temp(isite, :)
+    !    temps = temp(isite, :)
     64 continue
     time_p = time_l + timei
     temp_o = temps
@@ -1203,7 +1205,7 @@ subroutine stefan1D(temps, n_grd, dz, time_loop, isite, lay_idx, flux)
         time_swith = -1.0
         GOTO 64
     endif
-   
+
     do i_grd = 2, n_grd - 1
         D = fapp_hcap(temp_o, isite, i_grd) / timei
         A = 2.D0 * ftcon(temp_o(i_grd), isite, i_grd, time_p) / (dz(i_grd) * (dz(i_grd) + dz(i_grd + 1)))
