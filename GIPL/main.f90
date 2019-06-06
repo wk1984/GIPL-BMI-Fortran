@@ -26,18 +26,25 @@ allocate(y(model%n_grd))
 x = model%zdepth
 y = model%temp(1,:)
 
-print*, maxval(y)
+print*, model%temp(1,41)
+print*, model%RES(1,5)
+do i = 1, 1
 
 call update(model)
+
+print*, i, model%temp(1,40)
+!print*, model%RES(1,4)
+
+enddo 
 !
-x = model%zdepth
-y = model%temp(1,:)
+!x = model%zdepth
+!y = model%temp(1,:)
 
-do i = 1, model%n_time
-   print*, model%RES(i,4)
-enddo
+!do i = 1, model%n_time
+!!   print*, modelR%ES(i,4)
+!enddo
 
-print*, model%temp(1,41)
+!print*, model%temp(1,41)
 
 call finalize(model)
 

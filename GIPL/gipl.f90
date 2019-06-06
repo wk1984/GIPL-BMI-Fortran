@@ -320,25 +320,28 @@ subroutine update(model)
     TINIR = 0.0D0
     
     do while (time_loop(1) .LT. time_e)
-    
+            
         do i_site = 1, n_site
             
             time_cur(i_site) = time_loop(i_site) + time_restart
             
             call save_results(i_site, time_cur(i_site), time_loop(i_site))
-            
+            model%temp = temp
             6666 continue
             
             call stefan1D(temp(i_site,:), n_grd, dz, time_loop(i_site), i_site, lay_id(i_site,:), &
             temp_grd(i_site))
             
+            print*, 'cur=', time_cur(1), time_loop(1)
+            
             time_loop(i_site) = time_loop(i_site) + time_step
             time_cur(i_site) = time_loop(i_site) + time_restart
-            
+
             if (i_time(i_site) .LT. n_time) then
                 i_time(i_site) = i_time(i_site) + 1
                 call save_results(i_site, time_cur(i_site), time_loop(i_site))
                 call active_layer(model, i_site)
+                model%temp = temp
                 GOTO 6666
                 
             endif
@@ -356,7 +359,6 @@ subroutine update(model)
         
     enddo
     
-    model%temp = temp
     model%RES  = RES
     
     end subroutine update
