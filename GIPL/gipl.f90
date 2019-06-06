@@ -104,6 +104,8 @@ module gipl_model
     !    implicit none
 
     type :: gipl_model_type
+        
+        real*8 :: top_run_time
 
         ! copy from const
 
@@ -304,26 +306,18 @@ contains
         real :: frz_up_time_cur ! freezeup time current (within a year)
         real :: frz_up_time_tot ! freezeup time global
         ! counters (time,steps)
-
+        
         real*8 :: time_loop(n_site) ! main looping time
         real*8 :: time_cur(n_site) ! current time (e.g. current day)
         ! other counters
         integer :: i_site, j_time, i_grd, i_lay
         integer :: ierr
-
-        time_loop = TINIR
         
-!        print*, time_loop(1)
-
-!        print*, time_loop, time_restart
-
+        time_loop = model%top_run_time
+        
             do i_site = 1, n_site
                 
-!                time_cur(i_site) = time_loop(i_site) + time_restart
-
-!                6666 continue
-                
-                ! stefan1D(temps, n_grd, dz, time_loop, isite, lay_idx, flux)
+                time_cur(i_site) = time_loop(i_site) + time_restart             
                 
                 call stefan1D(temp(i_site, :), n_grd, dz, time_loop(i_site), i_site, lay_id(i_site, :), &
                         temp_grd(i_site))
@@ -331,29 +325,21 @@ contains
                 time_loop(i_site) = time_loop(i_site) + time_step
                 time_cur(i_site) = time_loop(i_site) + time_restart
 
-!                if (i_time(i_site) .LT. n_time) then
                     i_time(i_site) = i_time(i_site) + 1
                     call save_results(i_site, time_cur(i_site), time_loop(i_site))
                     model%temp = temp
-!                    GOTO 6666
-
-!                endif
 
             enddo
 
             if (time_s .LT. time_e.AND.time_loop(1) .GT. time_s)then
                 do i_site = 1, n_site
-                    do j_time = int(TINIR+1), int(TINIR+1) ! WRITTING RESULTS
+                    do j_time = int(model%top_run_time+1), int(model%top_run_time+1) ! WRITTING RESULTS
                         write(1, FMT1) idx_site(i_site), (RES(j_time, i_grd), i_grd = 1, m_grd + 3)
                     enddo
                 enddo
             endif
-
-!        enddo
-
-        TINIR = time_loop(1)
-
-!        print*, 'TINIR=', TINIR     
+    
+        model%top_run_time = model%top_run_time + 1
 
         model%RES = RES
 
@@ -1200,7 +1186,7 @@ subroutine stefan1D(temps, n_grd, dz, time_loop, isite, lay_idx, flux)
     real*8 :: time_p ! present time in a subroutine
     real*8 :: timei ! main subroutine timer
     real :: time_swith ! for timei
-
+    
     time_l = time_loop
     time_swith = -1.0
     timei = TAUM
