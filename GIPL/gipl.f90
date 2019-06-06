@@ -106,6 +106,7 @@ module gipl_model
     type :: gipl_model_type
 
         real*8 :: top_run_time
+        integer :: write_outputs_or_not !1: write out to file, 0: not.
 
         ! copy from const
 
@@ -313,35 +314,57 @@ contains
         integer :: i_site, j_time, i_grd, i_lay
         integer :: ierr
 
-        time_loop = model%top_run_time - 1
-
-        do i_site = 1, n_site
-
-            time_cur(i_site) = time_loop(i_site) + time_restart
-
-            call stefan1D(temp(i_site, :), n_grd, dz, time_loop(i_site), i_site, lay_id(i_site, :), &
-                    temp_grd(i_site))
-
-            time_loop(i_site) = time_loop(i_site) + time_step
-            time_cur(i_site) = time_loop(i_site) + time_restart
-
-            i_time(i_site) = i_time(i_site) + 1
-            call save_results(i_site, time_cur(i_site), time_loop(i_site))
-            model%temp = temp
-
-        enddo
-
-        if (time_s .LT. time_e.AND.time_loop(1) .GT. time_s)then
+        if (model % top_run_time .eq. 1) then
+            time_loop = model % top_run_time - 1
+            ! Initialize the results array
             do i_site = 1, n_site
-                do j_time = int(model%top_run_time), int(model%top_run_time) ! WRITTING RESULTS
-                    write(1, FMT1) idx_site(i_site), (RES(j_time, i_grd), i_grd = 1, m_grd + 3)
-                enddo
+                time_cur(i_site) = time_loop(i_site) + time_restart
+                call save_results(i_site, time_cur(i_site), time_loop(i_site))
             enddo
+
+            if (model % top_run_time - 1 .eq. 0) then ! write the first time step.
+                if (model % write_outputs_or_not .eq. 1) then
+                    do i_site = 1, n_site
+                        do j_time = int(model % top_run_time), int(model % top_run_time) ! WRITTING RESULTS
+                            write(1, FMT1) idx_site(i_site), (RES(j_time, i_grd), i_grd = 1, m_grd + 3)
+                        enddo
+                    enddo
+                endif
+            endif
+
+        else
+            time_loop = model % top_run_time - 2
+            do i_site = 1, n_site
+
+                time_cur(i_site) = time_loop(i_site) + time_restart
+
+                call stefan1D(temp(i_site, :), n_grd, dz, time_loop(i_site), i_site, lay_id(i_site, :), &
+                        temp_grd(i_site))
+
+                time_loop(i_site) = time_loop(i_site) + time_step
+                time_cur(i_site) = time_loop(i_site) + time_restart
+
+                i_time(i_site) = i_time(i_site) + 1
+                call save_results(i_site, time_cur(i_site), time_loop(i_site))
+                model % temp = temp
+
+            enddo
+
         endif
 
-        model%top_run_time = model%top_run_time + 1
+        if (model % write_outputs_or_not .eq. 1) then
+            if (time_s .LT. time_e.AND.time_loop(1) .GT. time_s)then
+                do i_site = 1, n_site
+                    do j_time = int(model % top_run_time), int(model % top_run_time) ! WRITTING RESULTS
+                        write(1, FMT1) idx_site(i_site), (RES(j_time, i_grd), i_grd = 1, m_grd + 3)
+                    enddo
+                enddo
+            endif
+        endif
 
-        model%RES = RES
+        model % top_run_time = model % top_run_time + 1
+
+        model % RES = RES
 
     end subroutine update
 
@@ -379,12 +402,6 @@ contains
         integer :: gln
         real*8, allocatable :: z(:) ! vertical grid
         real*8 :: hcscale
-
-        !    IF (COMMAND_ARGUMENT_COUNT() .EQ. 0) THEN
-        !        fconfig = 'gipl_config.cfg'
-        !    ELSE
-        !        CALL GET_COMMAND_ARGUMENT(1, fconfig)
-        !    ENDIF
 
         call filexist(trim(adjustl(fconfig)))
         open(60, file = fconfig)
@@ -717,22 +734,21 @@ contains
             call active_layer(model, i_site)
         enddo
 
-        open(1, file = trim(adjustl(result_file)) // '.txt', STATUS = 'unknown')
-        open(2, file = trim(adjustl(aver_res_file)) // '.txt', STATUS = 'unknown')
-        open(3, file = trim(adjustl(restart_file)) // '.txt', STATUS = 'unknown')
+        if (model%write_outputs_or_not .eq. 1) then
 
-        write(FMT1, '(A33,I0,A11)') '(1x,I0.10,1x,F10.0,2(1x,F10.4),', m_grd, '(1x,F10.4))'
-        write(FMT2, '(A32,I0,A40)') '(1x,I0.10,1x,F10.0,2(1x,F8.3),', m_grd, '(1x,F8.3),(1x,F8.3,1x,F12.3),(1x,F12.3))'
+            open(1, file = trim(adjustl(result_file)) // '.txt', STATUS = 'unknown')
+            open(2, file = trim(adjustl(aver_res_file)) // '.txt', STATUS = 'unknown')
+            open(3, file = trim(adjustl(restart_file)) // '.txt', STATUS = 'unknown')
+
+            write(FMT1, '(A33,I0,A11)') '(1x,I0.10,1x,F10.0,2(1x,F10.4),', m_grd, '(1x,F10.4))'
+            write(FMT2, '(A32,I0,A40)') '(1x,I0.10,1x,F10.0,2(1x,F8.3),', m_grd, '(1x,F8.3),(1x,F8.3,1x,F12.3),(1x,F12.3))'
+
+        endif
 
         TINIR = 0.0D0
 
         time_s = time_step * DBLE(n_time * time_beg)
         time_e = time_step * DBLE(n_time * time_end)
-
-        ! Initialize the results array
-        do i_site = 1, n_site
-            call save_results(i_site, 1.0D0, 0.0D0)
-        enddo
 
         ! pass value to model interface
 
@@ -775,7 +791,8 @@ contains
         model%n_lay_cur = n_lay_cur
         model%n_bnd_lay = n_bnd_lay
 
-        model%top_run_time = 1 ! first simulation is 1, initial is 0.
+        model%top_run_time = 1 ! initial is 1.
+        !        model%write_outputs_or_not = 0 ! 1: write out to file, 0: not.
 
     end subroutine initialize
 
@@ -787,15 +804,19 @@ contains
 
         type(gipl_model_type) :: model
 
-        rewind(3) ! -------------start file writting begin
-        write(3, *) time_restart
-        !   write(3, * ) time_cur(1)
+        if (model%write_outputs_or_not==1) then
 
-        do i_grd = 1, n_grd
-            write (3, *) (temp(i_site, i_grd), i_site = 1, n_site)
-        enddo ! -------------start file writting end
+            ! -------------start file writting begin
+            rewind(3)
+            write(3, *) time_restart
+            do i_grd = 1, n_grd
+                write (3, *) (temp(i_site, i_grd), i_site = 1, n_site)
+            enddo
+            ! -------------start file writting end
 
-        close(1); close(2); close(3)
+            close(1); close(2); close(3)
+
+        endif
 
     end subroutine finalize
 
@@ -817,14 +838,12 @@ contains
             do I = 1, last
                 call interpolate(zdepth_ini, ztemp_ini(:, I), n_ini, zdepth, temp(I, :), n_grd)
             enddo
-        elseif (restart .EQ. 0)then !restart=0 enbales spinup
-            write(file_init, '(A164)') restart_file
-            open(60, file = file_init, action = 'READ')
-            read(60, *) time_restart ! day number in restart file
-            do J = 1, n_grd
-                read (60, *) (temp(i, j), i = 1, last)
+        elseif (restart .EQ. 0) then !restart=0 enbales spinup
+            do i = 1, last
+                do J = 1, n_grd
+                    temp(i, j) = model%temp(i, j);
+                enddo
             enddo
-            close(60)
         endif
 
     end subroutine init_cond
