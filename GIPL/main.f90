@@ -11,9 +11,11 @@ program gipl2
 
     call cpu_time(run_time_start)
 
+    model%write_outputs_or_not = 1
+    
     fconfig = '../data/gipl_config.cfg'
 
-    call initialize(model, fconfig)
+    call initialize(model, fconfig)   
 
     allocate(x(model % n_grd))
     allocate(y(model % n_grd))
@@ -23,13 +25,13 @@ program gipl2
     
     ! temp(1,40): soil surface temperature.
     
-    print*, model % top_run_time, model % temp(1, 40)
-
-    do i = 1, model % n_time -1
+    do i = 1, 365
+        
+        cur_time = model%top_run_time
 
         call update(model)
 
-        print*, model % top_run_time, model % temp(1, 40)
+        print*, cur_time, model % temp(1, 40)
 
     enddo
 
