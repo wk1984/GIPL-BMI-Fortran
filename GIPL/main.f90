@@ -5,28 +5,40 @@ type (gipl_model_type) :: model
 
 real*8 :: run_time_start, run_time_final
 
+real, allocatable :: x(:), y(:)
+
 call cpu_time(run_time_start)
 
 call initialize(model, '../data/gipl_config.cfg')
 !call run_model
 !call finalize
 
-print*, model%n_sec_day
-print*, model%restart
-print*, model%time_step
-print*, model%n_time, model%n_temp, model%n_site
-
+print*, model%n_time
 print*, model%n_grd
+!
+!do i = 1, model%n_grd
+!!    print*, model%zdepth(i), model%temp(1,i)
+!enddo
+!
+allocate(x(model%n_grd))
+allocate(y(model%n_grd))
+!
+x = model%zdepth
+y = model%temp(1,:)
 
-do i = 1,model%n_ini
-    write(*,*) model%zdepth_ini(i), model%ztemp_ini(i,1)
-!write(*,*) model%utemp_time(i),model%utemp(i,1), model%snd(i,1)
+print*, maxval(y)
+
+call update(model)
+!
+x = model%zdepth
+y = model%temp(1,:)
+
+do i = 1, model%n_time
+   print*, model%RES(i,4)
 enddo
 
-do i = 1,model%m_grd
-    write(*,*) model%zdepth(i), model%zdepth_id(i)
-enddo
+print*, model%temp(1,41)
 
-call cpu_time(run_time_final)
+call finalize(model)
 
 end ! end of main program
