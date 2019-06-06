@@ -313,14 +313,11 @@ contains
 
         time_loop = TINIR
 
-        print*, time_loop
+        print*, time_loop, time_restart
 
         do while (time_loop(1) .LT. time_e)
 
             do i_site = 1, n_site
-
-                time_cur(i_site) = time_loop(i_site) + time_restart
-                call save_results(i_site, time_cur(i_site), time_loop(i_site))
 
                 6666 continue
 
@@ -330,12 +327,10 @@ contains
                 time_loop(i_site) = time_loop(i_site) + time_step
                 time_cur(i_site) = time_loop(i_site) + time_restart
 
-                print*, 'loop=',time_loop(1)
-
                 if (i_time(i_site) .LT. n_time) then
                     i_time(i_site) = i_time(i_site) + 1
                     call save_results(i_site, time_cur(i_site), time_loop(i_site))
-
+                    model%temp = temp
                     GOTO 6666
 
                 endif
@@ -354,13 +349,9 @@ contains
 
         enddo
 
-        !        print*, 'n_time=', n_time, 'time_e=', time_e, 'time_s=', time_s, time_loop(1)
-
         TINIR = time_loop(1)
 
-        print*, TINIR
-
-        !        enddo
+        print*, TINIR     
 
         model%RES = RES
 
@@ -752,7 +743,7 @@ contains
 
         ! Initialize the results array
         do i_site=1,n_site
-            call save_results(i_site, 0.0D0, time_restart)
+            call save_results(i_site, 1.0D0, 0.0D0)
         enddo
 
         ! pass value to model interface
