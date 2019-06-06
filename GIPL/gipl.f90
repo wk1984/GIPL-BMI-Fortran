@@ -345,8 +345,6 @@ contains
                 enddo
             endif
 
-
-
         enddo
 
         TINIR = time_loop(1)
@@ -748,46 +746,44 @@ contains
 
         ! pass value to model interface
 
-        model%n_temp = n_temp
-        model%utemp_time = utemp_time
-        model%utemp = utemp
+        model%n_temp          = n_temp
+        model%utemp_time      = utemp_time
+        model%utemp           = utemp
 
-        model%n_stcon = n_stcon
-        model%stcon_time = stcon_time
-        model%stcon = stcon
+        model%n_stcon         = n_stcon
+        model%stcon_time      = stcon_time
+        model%stcon           = stcon
 
-        model%n_snow = n_snow
-        model%snd_time = snd_time
-        model%snd = snd
+        model%n_snow          = n_snow
+        model%snd_time        = snd_time
+        model%snd             = snd
 
-        model%n_ini = n_ini
-        model%zdepth_ini = zdepth_ini
-        model%ztemp_ini = ztemp_ini
+        model%n_ini           = n_ini
+        model%zdepth_ini      = zdepth_ini
+        model%ztemp_ini       = ztemp_ini
 
-        model%zdepth = zdepth
-        model%zdepth_id = zdepth_id
+        model%zdepth          = zdepth
+        model%zdepth_id       = zdepth_id
 
-        model%dz = dz
-        model%temp = temp
-        model%lay_id = lay_id
-        model%temp_frz = temp_frz
-        model%RES = RES
-        model%n_lay_cur = n_lay_cur
+        model%dz              = dz
+        model%temp            = temp
+        model%lay_id          = lay_id
+        model%temp_frz        = temp_frz
+        model%RES             = RES
+        model%n_lay_cur       = n_lay_cur
 
-        model%n_lay = n_lay
+        model%n_lay           = n_lay
 
-        model%vwc = vwc
-        model%a_coef = a_coef
-        model%b_coef = b_coef
+        model%vwc             = vwc
+        model%a_coef          = a_coef
+        model%b_coef          = b_coef
         model%EE = EE
-        model%hcap_frz = hcap_frz
-        model%hcap_thw = hcap_thw
-        model%tcon_frz = tcon_frz
-        model%tcon_thw = tcon_thw
-        model%n_lay_cur = n_lay_cur
-        model%n_bnd_lay = n_bnd_lay
-
-
+        model%hcap_frz        = hcap_frz
+        model%hcap_thw        = hcap_thw
+        model%tcon_frz        = tcon_frz
+        model%tcon_thw        = tcon_thw
+        model%n_lay_cur       = n_lay_cur
+        model%n_bnd_lay       = n_bnd_lay
 
     end subroutine initialize
 
