@@ -314,6 +314,8 @@ contains
         integer :: i_site, j_time, i_grd, i_lay
         integer :: ierr
 
+        real*8 :: hcscale
+
         !=========
         ! The follow lines are alternative solution to pass changes to the model.
         ! but interpolate function seems like to bring different results
@@ -321,22 +323,60 @@ contains
         ! Seems function 'SNOWFIX' is that problem. Remove this, the example outputs
         ! are same. To be confirmed. (Kang, 2019-6-7)
 
-        utemp = model%utemp
-        snd = model%snd
-        stcon = model%stcon
+        if ((maxval(abs(utemp - model%utemp)) .ne. 0) .or. &
+                (maxval(abs(snd - model%snd)) .ne. 0) .or. &
+                (maxval(abs(stcon - model%stcon)) .ne. 0)) then
 
-        !        i_time = 1
+            utemp = model%utemp
+            snd = model%snd
+            stcon = model%stcon
 
-        do j_time = 1, n_time + 2
-            utemp_time_i(j_time) = 1 + DBLE(j_time - 1) * time_step
-        enddo
-        !
-        do i_site = 1, n_site
-            call interpolate(utemp_time, utemp(:, i_site), n_temp, utemp_time_i, utemp_i(:, i_site), n_time + 2)
-            call interpolate(snd_time, snd(:, i_site), n_snow, utemp_time_i, snd_i(:, i_site), n_time + 2)
-            !        call snowfix(model, utemp_i(:, i_site), snd_i(:, i_site), n_time + 2)
-            call interpolate(stcon_time, stcon(:, i_site), n_stcon, utemp_time_i, stcon_i(:, i_site), n_time + 2)
-        enddo
+            do j_time = 1, n_time + 2
+                utemp_time_i(j_time) = 1 + DBLE(j_time - 1) * time_step
+            enddo
+            !
+            do i_site = 1, n_site
+                call interpolate(utemp_time, utemp(:, i_site), n_temp, utemp_time_i, utemp_i(:, i_site), n_time + 2)
+                call interpolate(snd_time, snd(:, i_site), n_snow, utemp_time_i, snd_i(:, i_site), n_time + 2)
+                !        call snowfix(model, utemp_i(:, i_site), snd_i(:, i_site), n_time + 2)
+                call interpolate(stcon_time, stcon(:, i_site), n_stcon, utemp_time_i, stcon_i(:, i_site), n_time + 2)
+            enddo
+
+        end if
+        !=========
+
+        ! The follow lines are pass soil parameter changes to the model.
+        if ((maxval(abs(vwc - model%vwc)) .ne. 0) .or. &
+                (maxval(abs(a_coef - model%a_coef)) .ne. 0) .or. &
+                (maxval(abs(b_coef - model%b_coef)) .ne. 0) .or. &
+                (maxval(abs(hcap_frz - model%hcap_frz)) .ne. 0) .or. &
+                (maxval(abs(hcap_thw - model%hcap_thw)) .ne. 0) .or. &
+                (maxval(abs(tcon_frz - model%tcon_frz)) .ne. 0) .or. &
+                (maxval(abs(tcon_thw - model%tcon_thw)) .ne. 0)) then
+
+            vwc = model%vwc
+            a_coef = model%a_coef
+            b_coef = model%b_coef
+            hcap_frz = model%hcap_frz
+            hcap_thw = model%hcap_thw
+            tcon_frz = model%tcon_frz
+            tcon_thw = model%tcon_thw
+
+            do i_site = 1, n_site
+                do i_lay = 1, n_lay_cur(i_site)
+                    temp_frz(i_lay, i_site) = -(vwc(i_lay, i_site) / a_coef(i_lay, i_site))**(1.d0 / b_coef(i_lay, i_site))
+                enddo
+            end do
+
+            hcscale = zdepth(n_grd) * zdepth(n_grd) / n_sec_day
+
+            hcap_frz = hcap_frz * hcscale
+            hcap_thw = hcap_thw * hcscale
+            hcap_s = hcap_snow * hcscale
+            L_fus = Lf * hcscale
+
+        end if
+
         !=========
 
         if (model % top_run_time .eq. 1) then
@@ -731,10 +771,11 @@ contains
         enddo
 
         hcscale = zdepth(n_grd) * zdepth(n_grd) / n_sec_day
+
         hcap_frz = hcap_frz * hcscale
         hcap_thw = hcap_thw * hcscale
         hcap_s = hcap_snow * hcscale
-        L_fus = hcscale * Lf
+        L_fus = Lf * hcscale
 
         call assign_layer_id(n_lay, n_lay_cur, n_site, n_grd, zdepth, n_bnd_lay, lay_id)
         call init_cond(model, restart, n_site)
