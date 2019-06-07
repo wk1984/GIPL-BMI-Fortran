@@ -8,6 +8,8 @@ program bmi_main
     character (len = *), parameter :: var_name2 = "snowpack__depth"
     character (len = *), parameter :: var_name3 = "snow__thermal_conductivity"
 
+    character (len = *), parameter :: var_name4 = "soil_water__volume_fraction" ! VWC
+
     character (len = *), parameter :: var_name5 = "precipitation_mass_flux_adjust_factor"
     character (len = *), parameter :: var_name6 = "snow_class"
 
@@ -40,6 +42,7 @@ program bmi_main
     real, allocatable :: temperature(:)
     real, allocatable :: snow_depth(:)
     real, allocatable :: snow_conductivity(:)
+    !    real, dimension(10) :: vwc, uwc_a, uwc_b, hc_a, hc_b, kt, kf
 
     real, allocatable :: soil_temperature(:)
     real, allocatable :: depth(:)
@@ -85,6 +88,13 @@ program bmi_main
     s = model%get_grid_size(grid_id3, grid_size3)
     s = model%get_var_units(var_name3, var_unit3)
 
+    ! Get snow thermal conductivity
+    s = model%get_var_grid(var_name4, grid_id4)
+    s = model%get_grid_size(grid_id4, grid_size4)
+    s = model%get_var_units(var_name4, var_unit4)
+
+    print*, grid_id4
+
     ! Get soil temperatures
     s = model%get_var_grid(out_name1, out_grid_id1)
     s = model%get_grid_rank(out_grid_id1, out_grid_rank1)
@@ -103,11 +113,13 @@ program bmi_main
     allocate(snow_depth(grid_size2))
     allocate(snow_conductivity(grid_size3))
 
+    write(*, '(A5, 1x, A8, 1X, A8, 1X,A8, 1X,A8, 1X,A8)') 'T', 'Tair', 'Snow', 'Surface', 'Tg 0.3m', 'Tg 1m'
+
     do i = 1, int(end_time)
 
         if (i .eq. 5) then ! change air temperature at the 5th time step.
 
-!            s = model%set_value('land_surface_air__temperature', [-5.0])
+            s = model%set_value('land_surface_air__temperature', [-5.0])
 
         end if
 
@@ -118,14 +130,12 @@ program bmi_main
         s = model%get_value(var_name3, snow_conductivity)
         s = model%get_value(out_name1, soil_temperature)
 
-        write(*, '(I5, 1x, F8.2,1X,F8.3, 1X,F8.3)'), i, temperature, snow_depth, soil_temperature(40)
+        if ((i .le. 190) .and. (i .ge. 180)) then
 
+            write(*, '(I5, 1x, F8.3, 1X, F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3)'), i, temperature, snow_depth, soil_temperature(39), soil_temperature(59), soil_temperature(94)
+
+        end if
     enddo
-    !   write(*, '("Snow Class       = ",I0)') snow_class
-    !   write(*, '("Open Area or Not = ",I0)') open_area
-    !   write(*, '("P Adjust         = ",f0.2)') precipitation_adjust_factor
-
-    print *, 'Updating'
 
     s = model%finalize()
 
