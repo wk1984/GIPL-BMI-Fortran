@@ -317,7 +317,9 @@ contains
         !=========
         ! The follow lines are alternative solution to pass changes to the model.
         ! but interpolate function seems like to bring different results
-        ! To be checked.
+        ! To be checked. (Kang, 2019-6-6)
+        ! Seems function 'SNOWFIX' is that problem. Remove this, the example outputs
+        ! are same. To be confirmed. (Kang, 2019-6-7)
 
         utemp = model%utemp
         snd = model%snd
