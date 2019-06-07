@@ -8,3 +8,5 @@ function(make_example example_name)
   add_executable(${example_name} ${src_${example_name}})
   target_link_libraries(${example_name} ${bmi_lib} ${bmigipl_lib})
 endfunction(make_example)
+
+make_example(info_ex)
