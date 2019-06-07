@@ -6,7 +6,7 @@ run_install_name_tool() {
 	    ${CONDA_PREFIX}/lib/libgfortran.3.dylib \
 	-change @rpath/libquadmath.0.dylib \
 	    ${CONDA_PREFIX}/lib/libquadmath.0.dylib \
-	./snow/$2/$1
+	./gipl/$2/$1
     echo "- updated $exe"
 }
 
@@ -16,13 +16,8 @@ fi
 
 echo $CONDA_PREFIX
 
-examples="irf_ex \
-    change_prec_adjust_factor_ex \
-    conflicting_instances_ex \
-    get_value_ex \
-    info_ex \
-    set_value_ex \
-    vargrid_ex"
+examples="info_ex"
+
 for exe in $examples; do
     run_install_name_tool $exe examples
 done
