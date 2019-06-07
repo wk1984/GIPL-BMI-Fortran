@@ -13,7 +13,7 @@ program gipl2
 
     model%write_outputs_or_not = 1
     
-    fconfig = '../data/gipl_config.cfg'
+    fconfig = 'gipl_config.cfg'
 
     call initialize(model, fconfig)   
 
@@ -25,10 +25,20 @@ program gipl2
     
     ! temp(1,40): soil surface temperature.
     
+!     model%vwc(1,1) = 0.1
+        
     do i = 1, 365
         
         cur_time = model%top_run_time
-
+        
+!        print*, model%utemp(3,1)
+        
+!        model%utemp(3,1) = 0
+!        model%snd(:,1)   = 0
+!        model%stcon(:,1)  = 0.3
+        
+!        print*, model%utemp(3,1)
+        
         call update(model)
 
         print*, cur_time, model % temp(1, 40)
