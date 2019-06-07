@@ -107,7 +107,7 @@ program bmi_main
 
         if (i .eq. 5) then ! change air temperature at the 5th time step.
 
-            s = model%set_value('land_surface_air__temperature', [-5.0])
+!            s = model%set_value('land_surface_air__temperature', [-5.0])
 
         end if
 
