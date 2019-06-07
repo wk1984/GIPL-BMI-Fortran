@@ -313,24 +313,30 @@ contains
         ! other counters
         integer :: i_site, j_time, i_grd, i_lay
         integer :: ierr
-        
+
         !=========
         ! The follow lines are alternative solution to pass changes to the model.
         ! but interpolate function seems like to bring different results
         ! To be checked.
-        
+
         utemp = model%utemp
-        snd   = model%snd
+        snd = model%snd
         stcon = model%stcon
-        
-!        do i_site = 1, n_site
-!        call interpolate(utemp_time, utemp(:, i_site), n_temp, utemp_time_i, utemp_i(:, i_site), n_time + 2)
-!        call interpolate(snd_time, snd(:, i_site), n_snow, utemp_time_i, snd_i(:, i_site), n_time + 2)
-!        call snowfix(model, utemp_i(:, i_site), snd_i(:, i_site), n_time + 2)
-!        call interpolate(stcon_time, stcon(:, i_site), n_stcon, utemp_time_i, stcon_i(:, i_site), n_time + 2)
-!        enddo
+
+        !        i_time = 1
+
+        do j_time = 1, n_time + 2
+            utemp_time_i(j_time) = 1 + DBLE(j_time - 1) * time_step
+        enddo
+        !
+        do i_site = 1, n_site
+            call interpolate(utemp_time, utemp(:, i_site), n_temp, utemp_time_i, utemp_i(:, i_site), n_time + 2)
+            call interpolate(snd_time, snd(:, i_site), n_snow, utemp_time_i, snd_i(:, i_site), n_time + 2)
+            !        call snowfix(model, utemp_i(:, i_site), snd_i(:, i_site), n_time + 2)
+            call interpolate(stcon_time, stcon(:, i_site), n_stcon, utemp_time_i, stcon_i(:, i_site), n_time + 2)
+        enddo
         !=========
-        
+
         if (model % top_run_time .eq. 1) then
             time_loop = model % top_run_time - 1
             ! Initialize the results array
@@ -746,7 +752,7 @@ contains
             enddo
             call interpolate(utemp_time, utemp(:, i_site), n_temp, utemp_time_i, utemp_i(:, i_site), n_time + 2)
             call interpolate(snd_time, snd(:, i_site), n_snow, utemp_time_i, snd_i(:, i_site), n_time + 2)
-            call snowfix(model, utemp_i(:, i_site), snd_i(:, i_site), n_time + 2)
+            !            call snowfix(model, utemp_i(:, i_site), snd_i(:, i_site), n_time + 2)
             call interpolate(stcon_time, stcon(:, i_site), n_stcon, utemp_time_i, stcon_i(:, i_site), n_time + 2)
             call active_layer(model, i_site)
         enddo
