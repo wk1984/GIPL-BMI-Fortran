@@ -135,8 +135,10 @@ contains
     character (len=*), intent(in) :: config_file
     integer :: bmi_status
 
+    self%model%write_outputs_or_not = 1
+
     if (len(config_file) > 0) then
-        self%model%write_outputs_or_not = 1
+
        call initialize(self%model, config_file)
     else
        stop
