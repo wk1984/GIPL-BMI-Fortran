@@ -84,7 +84,7 @@ module bmigiplf
 
   ! Exchange items
   integer, parameter :: input_item_count = 10
-  integer, parameter :: output_item_count = 1
+  integer, parameter :: output_item_count = 2
   character (len=BMI_MAX_VAR_NAME), target, &
        dimension(input_item_count) :: input_items
   character (len=BMI_MAX_VAR_NAME), target, &
@@ -110,11 +110,7 @@ contains
 
     input_items(1) = 'land_surface_air__temperature'
     input_items(2) = 'snowpack__depth'
-    input_items(3) = 'snow__thermal_conductivity'
-
-    input_items(4) = 'open_area_or_not'
-    input_items(5) = 'snowpack__initial_depth'
-    input_items(6) = 'snowpack__initial_mass-per-volume_density'
+    input_items(3) = 'snow__thermal_conductivity'    
 
     names => input_items
     bmi_status = BMI_SUCCESS
@@ -140,6 +136,7 @@ contains
     integer :: bmi_status
 
     if (len(config_file) > 0) then
+        self%model%write_outputs_or_not = 1
        call initialize(self%model, config_file)
     else
        stop
@@ -269,6 +266,9 @@ contains
        grid_id = 1
        bmi_status = BMI_SUCCESS
     case('model_soil_layer__count')
+       grid_id = 1
+       bmi_status = BMI_SUCCESS
+    case('write_or_not')
        grid_id = 1
        bmi_status = BMI_SUCCESS
     case('soil__temperature')
@@ -521,6 +521,9 @@ contains
     case("model_soil_layer__count")
        var_type = "integer"
        bmi_status = BMI_SUCCESS
+    case("write_or_not")
+       var_type = "integer"
+       bmi_status = BMI_SUCCESS    
     case default
        var_type = "-"
        bmi_status = BMI_FAILURE
@@ -566,6 +569,8 @@ contains
        bmi_status = BMI_SUCCESS
     case("model_soil_layer__count")
        var_size = (self%model%n_z)
+    case("write_or_not")
+       var_size = 1
     case default
        var_size = -1
        bmi_status = BMI_FAILURE
@@ -600,6 +605,9 @@ contains
     integer, intent(inout) :: dest(:)
     integer :: bmi_status
     select case(var_name)
+    case("write_or_not")
+       dest = [self%model%write_outputs_or_not]
+       bmi_status = BMI_SUCCESS
     case default
        dest = [-1]
        bmi_status = BMI_FAILURE
@@ -622,7 +630,10 @@ contains
     bmi_status = BMI_SUCCESS
     case("snow__thermal_conductivity")
     dest = [self%model%stcon_cur]
-    bmi_status = BMI_SUCCESS    
+    bmi_status = BMI_SUCCESS
+    case("soil__temperature")
+        dest = [self%model%temp]
+        bmi_status = BMI_SUCCESS
     case default
        dest = [-1.0]
        bmi_status = BMI_FAILURE
@@ -745,7 +756,9 @@ contains
     integer :: bmi_status
     
     select case(var_name)
-
+    case("write_or_not")
+       self%model%write_outputs_or_not = src(1)
+       bmi_status = BMI_SUCCESS
     case default
        bmi_status = BMI_FAILURE
     end select
@@ -760,7 +773,9 @@ contains
     integer :: bmi_status
     
     select case(var_name)
-
+    case("land_surface_air__temperature")
+       self%model%utemp(self%model % top_run_time,1) = src(1)
+       bmi_status = BMI_SUCCESS
     case default
        bmi_status = BMI_FAILURE
     end select
