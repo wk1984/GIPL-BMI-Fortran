@@ -14,6 +14,9 @@ program bmi_main
   character (len=*), parameter :: var_name8 = "snowpack__initial_depth"
   character (len=*), parameter :: var_name9 = "initial_snow_density"
   
+  character (len=*), parameter :: out_name2 = 'model_soil_layer__count' 
+  character (len=*), parameter :: out_name1 = "soil__temperature"
+  
   integer, parameter :: ndims = 2
   integer:: s, grid_id1, grid_size1, grid_id2, grid_size2, i, iii
   integer:: grid_id3, grid_size3, grid_id4, grid_size4
@@ -21,38 +24,53 @@ program bmi_main
   integer:: grid_id7, grid_size7, grid_id8, grid_size8
   integer:: grid_id9, grid_size9
   
+  integer:: out_grid_id1, out_grid_size1, out_grid_rank1
+  integer:: soil_nodes_number
+  
   real:: x
   
   character(len=10) var_unit1, var_unit2, var_unit3
   character(len=10) var_unit4, unit5, unit6
   character(len=10) unit7, unit8, unit9
-    
+  
+  character(len=10) out_var_unit1
+      
   double precision :: current_time, end_time
   real, allocatable :: temperature(:)
   real, allocatable :: precipitation(:)
   real, allocatable :: snow_depth(:)
-  real, allocatable :: snow_density(:)
+  real, allocatable :: snow_conductivity(:)
   real, allocatable :: precipitation_adjust_factor(:)
   integer, allocatable :: snow_class(:)
   integer, allocatable :: open_area(:)
   real, allocatable :: initial_snow_depth(:)
   real, allocatable :: initial_snow_density(:)
   
+  real, allocatable:: depth(:)
+  
   type (bmi_gipl) :: model
   
   character*256 fconfig 
+  
+  integer, dimension (3) ::  out_grid_shape1
       
   IF (COMMAND_ARGUMENT_COUNT() .EQ. 0) THEN
-  fconfig = '../data/gipl_config.cfg'
+  fconfig = 'gipl_config.cfg'
   ELSE
   CALL GET_COMMAND_ARGUMENT(1, fconfig)
   ENDIF
   
-  do iii =  1, 3
+  do iii =  1, 1
   
   s = model%initialize(fconfig)
   
   write(*,"(a)") "Initialized"
+  
+  s = model%get_var_itemsize(out_name2, soil_nodes_number)
+  
+  print*, 'Total soil nodes:', soil_nodes_number
+  
+  allocate(depth(soil_nodes_number))
     
   s = model%get_current_time(current_time)
   s = model%get_end_time(end_time)
@@ -60,6 +78,23 @@ program bmi_main
   s = model%get_var_grid(var_name1, grid_id1)
   s = model%get_grid_size(grid_id1, grid_size1)
   s = model%get_var_units(var_name1, var_unit1)
+
+  s = model%get_var_grid(var_name2, grid_id2)
+  s = model%get_grid_size(grid_id2, grid_size2)
+  s = model%get_var_units(var_name2, var_unit2)
+  
+  s = model%get_var_grid(var_name3, grid_id3)
+  s = model%get_grid_size(grid_id3, grid_size3)
+  s = model%get_var_units(var_name3, var_unit3)
+  
+  s = model%get_var_grid(out_name1, out_grid_id1)
+  s = model%get_grid_rank(out_grid_id1, out_grid_rank1)
+  s = model%get_grid_size(out_grid_id1, out_grid_size1)
+  s = model%get_var_units(out_name1, out_var_unit1)
+  
+  s = model%get_grid_shape(out_grid_id1, out_grid_shape1)
+  
+  print*, grid_size3, out_grid_rank1, out_grid_shape1
     
 !   if (iii == 3) then
 !   
@@ -72,9 +107,20 @@ program bmi_main
   write(*, '("Final Time    = ",f0.1)') end_time
         
   allocate(temperature(grid_size1))
+  allocate(snow_depth(grid_size2))
+  allocate(snow_conductivity(grid_size3))
+  
+  do i = 1,365
+  
+  s = model%update()
   
   s = model%get_value(var_name1, temperature)
-   
+  s = model%get_value(var_name2, snow_depth)
+  s = model%get_value(var_name3, snow_conductivity)
+  
+!   print*, temperature, snow_depth, snow_conductivity
+  
+  enddo
 !   write(*, '("Snow Class       = ",I0)') snow_class
 !   write(*, '("Open Area or Not = ",I0)') open_area
 !   write(*, '("P Adjust         = ",f0.2)') precipitation_adjust_factor
