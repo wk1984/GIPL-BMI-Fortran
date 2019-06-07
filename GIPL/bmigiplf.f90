@@ -127,6 +127,7 @@ contains
     integer :: bmi_status
 
     output_items(1) = 'soil__temperature'
+    output_items(2) = 'model_soil_layer__count'
 
     names => output_items
     bmi_status = BMI_SUCCESS
@@ -261,30 +262,18 @@ contains
     case('land_surface_air__temperature')
        grid_id = 1
        bmi_status = BMI_SUCCESS
-    case('precipitation_mass_flux')
+    case('snow__thermal_conductivity')
        grid_id = 1
        bmi_status = BMI_SUCCESS
     case('snowpack__depth')
        grid_id = 1
        bmi_status = BMI_SUCCESS
-    case('snowpack__mass-per-volume_density')
+    case('model_soil_layer__count')
        grid_id = 1
        bmi_status = BMI_SUCCESS
-    case('precipitation_mass_flux_adjust_factor')
-       grid_id = 1
-       bmi_status = BMI_SUCCESS
-    case('snow_class')
-       grid_id = 1
-       bmi_status = BMI_SUCCESS
-    case('open_area_or_not')
-       grid_id = 1
-       bmi_status = BMI_SUCCESS
-    case('snowpack__initial_depth')
-       grid_id = 1
-       bmi_status = BMI_SUCCESS
-    case('snowpack__initial_mass-per-volume_density')
-       grid_id = 1
-       bmi_status = BMI_SUCCESS
+    case('soil__temperature')
+       grid_id = 2
+       bmi_status = BMI_SUCCESS       
     case default
        grid_id = -1
        bmi_status = BMI_FAILURE
@@ -304,6 +293,9 @@ contains
        bmi_status = BMI_SUCCESS
     case(1)
        grid_type = "scalar"
+       bmi_status = BMI_SUCCESS
+    case(2)
+       grid_type = "three_dims"
        bmi_status = BMI_SUCCESS
     case default
        grid_type = "-"
@@ -325,6 +317,8 @@ contains
     case(1)
        grid_rank = 0
        bmi_status = BMI_SUCCESS
+    case(2)
+       grid_rank = 3
     case default
        grid_rank = -1
        bmi_status = BMI_FAILURE
@@ -341,6 +335,9 @@ contains
     select case(grid_id)
     case(0)
        grid_shape = [self%model%n_y, self%model%n_x]
+       bmi_status = BMI_SUCCESS
+    case(2)
+       grid_shape = [self%model%n_y, self%model%n_x, self%model%n_z]
        bmi_status = BMI_SUCCESS
     case default
        grid_shape = [-1]
@@ -362,6 +359,9 @@ contains
     case(1)
        grid_size = 1
        bmi_status = BMI_SUCCESS
+    case(2)
+       grid_size = self%model%n_y * self%model%n_x * self%model%n_z
+       bmi_status = BMI_SUCCESS
     case default
        grid_size = -1
        bmi_status = BMI_FAILURE
@@ -378,6 +378,9 @@ contains
     select case(grid_id)
     case(0)
        grid_spacing = [self%model%dy, self%model%dx]
+       bmi_status = BMI_SUCCESS
+    case(2)
+       grid_spacing = [self%model%dy, self%model%dx, self%model%dz0]
        bmi_status = BMI_SUCCESS
     case default
        grid_spacing = [-1.d0]
@@ -413,6 +416,9 @@ contains
     case(1)
        grid_x = [0.d0]
        bmi_status = BMI_SUCCESS
+    case(2)
+       grid_x = [0.d0]
+       bmi_status = BMI_SUCCESS
     case default
        grid_x = [-1.d0]
        bmi_status = BMI_FAILURE
@@ -428,6 +434,9 @@ contains
 
     select case(grid_id)
     case(1)
+       grid_y = [0.d0]
+       bmi_status = BMI_SUCCESS
+    case(2)
        grid_y = [0.d0]
        bmi_status = BMI_SUCCESS
     case default
@@ -446,6 +455,9 @@ contains
     select case(grid_id)
     case(1)
        grid_z = [0.d0]
+       bmi_status = BMI_SUCCESS
+    case(2)
+       grid_z = [self%model%zdepth]
        bmi_status = BMI_SUCCESS
     case default
        grid_z = [-1.d0]
@@ -500,29 +512,14 @@ contains
     case("land_surface_air__temperature")
        var_type = "real"
        bmi_status = BMI_SUCCESS
-    case("precipitation_mass_flux")
-       var_type = "real"
-       bmi_status = BMI_SUCCESS
-    case("precipitation_mass_flux_adjust_factor")
-       var_type = "real"
-       bmi_status = BMI_SUCCESS
     case("snowpack__depth")
        var_type = "real"
        bmi_status = BMI_SUCCESS
-    case("snowpack__mass-per-volume_density")
+    case("snow__thermal_conductivity")
        var_type = "real"
        bmi_status = BMI_SUCCESS
-    case("snow_class")
+    case("model_soil_layer__count")
        var_type = "integer"
-       bmi_status = BMI_SUCCESS
-    case("open_area_or_not")
-       var_type = "integer"
-       bmi_status = BMI_SUCCESS
-    case("snowpack__initial_depth")
-       var_type = "real"
-       bmi_status = BMI_SUCCESS
-    case("snowpack__initial_mass-per-volume_density")
-       var_type = "real"
        bmi_status = BMI_SUCCESS
     case default
        var_type = "-"
@@ -541,29 +538,11 @@ contains
     case("snowpack__depth")
        var_units = "cm"
        bmi_status = BMI_SUCCESS
-    case("snowpack__mass-per-volume_density")
-       var_units = "kg per m3"
-       bmi_status = BMI_SUCCESS
-    case("snowpack__initial_depth")
-       var_units = "cm"
-       bmi_status = BMI_SUCCESS
-    case("snowpack__initial_mass-per-volume_density")
-       var_units = "kg per m3"
-       bmi_status = BMI_SUCCESS
     case("land_surface_air__temperature")
        var_units = "C"
        bmi_status = BMI_SUCCESS
-    case("precipitation_mass_flux")
-       var_units = "mm"
-       bmi_status = BMI_SUCCESS
-    case("precipitation_mass_flux_adjust_factor")
-       var_units = "-"
-       bmi_status = BMI_SUCCESS
-    case("open_area_or_not")
-       var_units = "-"
-       bmi_status = BMI_SUCCESS
-    case("snow_class")
-       var_units = "-"
+    case("snow__thermal_conductivity")
+       var_units = "W m-1 K-1"
        bmi_status = BMI_SUCCESS
     case default
        var_units = "-"
@@ -580,11 +559,13 @@ contains
 
     select case(var_name)
     case("land_surface_air__temperature")
-       var_size = sizeof(self%model%utemp)  ! 'sizeof' in gcc & ifort
+       var_size = 1  ! 'sizeof' in gcc & ifort
        bmi_status = BMI_SUCCESS
     case("snowpack__depth")
-       var_size = sizeof(self%model%snd)         ! 'sizeof' in gcc & ifort
+       var_size = 1        ! 'sizeof' in gcc & ifort
        bmi_status = BMI_SUCCESS
+    case("model_soil_layer__count")
+       var_size = (self%model%n_z)
     case default
        var_size = -1
        bmi_status = BMI_FAILURE
@@ -634,8 +615,14 @@ contains
 
     select case(var_name)
     case("land_surface_air__temperature")
-    dest = [self%model%utemp]
+    dest = [self%model%tair_cur]
     bmi_status = BMI_SUCCESS
+    case("snowpack__depth")
+    dest = [self%model%snd_cur]
+    bmi_status = BMI_SUCCESS
+    case("snow__thermal_conductivity")
+    dest = [self%model%stcon_cur]
+    bmi_status = BMI_SUCCESS    
     case default
        dest = [-1.0]
        bmi_status = BMI_FAILURE
@@ -650,6 +637,7 @@ contains
     integer :: bmi_status
 
     select case(var_name)
+
     case default
        dest = [-1.d0]
        bmi_status = BMI_FAILURE
