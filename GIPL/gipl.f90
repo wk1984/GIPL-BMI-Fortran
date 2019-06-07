@@ -107,6 +107,9 @@ module gipl_model
 
         real*8 :: top_run_time
         integer :: write_outputs_or_not !1: write out to file, 0: not.
+        real*8 :: dt
+        integer:: n_x, n_y
+        real*8 :: dx,  dy
 
         ! copy from const
 
@@ -858,6 +861,12 @@ contains
         model%n_bnd_lay = n_bnd_lay
 
         model%top_run_time = 1 ! initial is 1.
+        model%dt           = 1
+        model%n_x          = 1
+        model%n_y          = 1
+        model%dx           = 1
+        model%dy           = 1
+
         !        model%write_outputs_or_not = 0 ! 1: write out to file, 0: not.
 
     end subroutine initialize
