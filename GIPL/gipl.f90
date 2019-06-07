@@ -384,7 +384,7 @@ contains
 
         !=========
         
-        i_time = 1
+!         i_time = 1
 
         if (model % top_run_time .eq. 1) then
             time_loop = model % top_run_time - 1
