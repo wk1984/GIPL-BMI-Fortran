@@ -108,8 +108,10 @@ module gipl_model
         real*8 :: top_run_time
         integer :: write_outputs_or_not !1: write out to file, 0: not.
         real*8 :: dt
-        integer:: n_x, n_y
-        real*8 :: dx,  dy
+        integer:: n_x, n_y, n_z
+        real*8 :: dx,  dy,  dz0
+        
+        real*8 :: tair_cur, snd_cur, stcon_cur
 
         ! copy from const
 
@@ -381,6 +383,8 @@ contains
         end if
 
         !=========
+        
+        i_time = 1
 
         if (model % top_run_time .eq. 1) then
             time_loop = model % top_run_time - 1
@@ -429,11 +433,16 @@ contains
                 enddo
             endif
         endif
+        
+        
+        model % tair_cur  = utemp(model % top_run_time,1)
+        model % snd_cur   = snd(model % top_run_time,1)
+        model % stcon_cur = stcon(model % top_run_time,1)
 
         model % top_run_time = model % top_run_time + 1
 
         model % RES = RES
-
+        
     end subroutine update
 
     subroutine initialize(model, fconfig)
@@ -471,7 +480,7 @@ contains
         real*8, allocatable :: z(:) ! vertical grid
         real*8 :: hcscale
 
-        call filexist(trim(adjustl(fconfig)))
+        call filexist(fconfig)
         open(60, file = fconfig)
         !read input files
         read(60, '(A)') stdummy
@@ -864,8 +873,10 @@ contains
         model%dt           = 1
         model%n_x          = 1
         model%n_y          = 1
+        model%n_z          = n_grd
         model%dx           = 1
         model%dy           = 1
+        model%dz0          = 1
 
         !        model%write_outputs_or_not = 0 ! 1: write out to file, 0: not.
 
