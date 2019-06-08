@@ -10,12 +10,6 @@ program bmi_main
 
     character (len = *), parameter :: var_name4 = "soil_water__volume_fraction" ! VWC
 
-    character (len = *), parameter :: var_name5 = "precipitation_mass_flux_adjust_factor"
-    character (len = *), parameter :: var_name6 = "snow_class"
-
-    character (len = *), parameter :: var_name8 = "snowpack__initial_depth"
-    character (len = *), parameter :: var_name9 = "initial_snow_density"
-
     character (len = *), parameter :: out_name2 = 'model_soil_layer__count'
     character (len = *), parameter :: out_name1 = "soil__temperature"
 
@@ -122,9 +116,15 @@ program bmi_main
 
     do i = 1, int(end_time)
 
-        if (i .eq. 5) then ! change air temperature at the 5th time step.
+        if (i .eq. 95) then ! change air temperature at the 5th time step.
 
             s = model%set_value('land_surface_air__temperature', [-5.0])
+
+        end if
+
+        if (i .eq. 100) then
+
+            s = model%set_value('snowpack__depth', [0.1])
 
         end if
 
@@ -137,9 +137,7 @@ program bmi_main
 
         read(1991,*) x, x, obs5, obs6, obs1, obs2, obs3, obs4
 
-        if ((i .le. 45) .and. (i .ge. 1)) then
-
-
+        if ((i .le. 120) .and. (i .ge. 81)) then
 
             write(*, '(I5, 1x, F8.3, 1X, F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3)'), &
                     i, temperature - obs5, snow_depth -obs6, &
