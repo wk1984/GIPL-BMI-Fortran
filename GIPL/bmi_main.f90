@@ -118,13 +118,19 @@ program bmi_main
 
         if (i .eq. 95) then ! change air temperature at the 5th time step.
 
-            s = model%set_value('land_surface_air__temperature', [-5.0])
+!            s = model%set_value('land_surface_air__temperature', [-5.0])
 
         end if
 
-        if (i .eq. 100) then
+        if (i .eq. 100) then ! change snow depth at the 100th time step.
 
-            s = model%set_value('snowpack__depth', [0.1])
+!            s = model%set_value('snowpack__depth', [0.1])
+
+        end if
+
+        if (i .eq. 110) then ! change snow thermal conductivity at the 110th time step.
+
+            s = model%set_value('snow__thermal_conductivity', [0.01])
 
         end if
 
@@ -137,7 +143,7 @@ program bmi_main
 
         read(1991,*) x, x, obs5, obs6, obs1, obs2, obs3, obs4
 
-        if ((i .le. 120) .and. (i .ge. 81)) then
+        if ((i .le. 130) .and. (i .ge. 91)) then
 
             write(*, '(I5, 1x, F8.3, 1X, F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3)'), &
                     i, temperature - obs5, snow_depth -obs6, &
