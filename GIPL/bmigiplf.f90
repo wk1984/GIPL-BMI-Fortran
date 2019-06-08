@@ -785,6 +785,9 @@ contains
         case("snowpack__depth")
             self%model%snd(self%model % top_run_time, 1) = src(1)
             bmi_status = BMI_SUCCESS
+         case("snow__thermal_conductivity")
+            self%model%stcon(self%model % top_run_time, 1) = src(1)
+            bmi_status = BMI_SUCCESS
         case default
             bmi_status = BMI_FAILURE
         end select
