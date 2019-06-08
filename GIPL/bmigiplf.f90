@@ -542,7 +542,7 @@ contains
 
         select case(var_name)
         case("snowpack__depth")
-            var_units = "cm"
+            var_units = "m"
             bmi_status = BMI_SUCCESS
         case("land_surface_air__temperature")
             var_units = "C"
@@ -781,6 +781,9 @@ contains
         select case(var_name)
         case("land_surface_air__temperature")
             self%model%utemp(self%model % top_run_time, 1) = src(1)
+            bmi_status = BMI_SUCCESS
+        case("snowpack__depth")
+            self%model%snd(self%model % top_run_time, 1) = src(1)
             bmi_status = BMI_SUCCESS
         case default
             bmi_status = BMI_FAILURE
