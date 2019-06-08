@@ -29,7 +29,7 @@ program bmi_main
     integer :: out_grid_id1, out_grid_size1, out_grid_rank1
     integer :: soil_nodes_number
 
-    real :: x
+    real :: x, obs1 , obs2, obs3, obs4, obs5, obs6
 
     character(len = 10) var_unit1, var_unit2, var_unit3
     character(len = 10) var_unit4, unit5, unit6
@@ -113,7 +113,12 @@ program bmi_main
     allocate(snow_depth(grid_size2))
     allocate(snow_conductivity(grid_size3))
 
-    write(*, '(A5, 1x, A8, 1X, A8, 1X,A8, 1X,A8, 1X,A8)') 'T', 'Tair', 'Snow', 'Surface', 'Tg 0.3m', 'Tg 1m'
+    open(1991, file = 'origin_out/result.txt.txt', status = 'OLD') ! open the benchmark output
+
+    write(*, *) 'Compare with benchmark ... '
+
+    write(*, '(A5, 1x, A8, 1X, A8, 1X,A8, 1X,A8, 1X,A8, 1X,A8)'), 'T', 'Tair', 'Snow', '0.001m', 'Tg 0.08m', 'Tg 0.12m', &
+            'Tg 0.20m'
 
     do i = 1, int(end_time)
 
@@ -130,13 +135,25 @@ program bmi_main
         s = model%get_value(var_name3, snow_conductivity)
         s = model%get_value(out_name1, soil_temperature)
 
-        if ((i .le. 190) .and. (i .ge. 180)) then
+        read(1991,*) x, x, obs5, obs6, obs1, obs2, obs3, obs4
 
-            write(*, '(I5, 1x, F8.3, 1X, F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3)'), i, temperature, snow_depth, soil_temperature(39), soil_temperature(59), soil_temperature(94)
+        if ((i .le. 45) .and. (i .ge. 1)) then
+
+
+
+            write(*, '(I5, 1x, F8.3, 1X, F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3)'), &
+                    i, temperature - obs5, snow_depth -obs6, &
+                    soil_temperature(40) - obs1, &
+                    soil_temperature(48) - obs2, &
+                    soil_temperature(50) - obs3, &
+                    soil_temperature(54) - obs4
 
         end if
     enddo
 
     s = model%finalize()
+
+    close(1991)
+
 
 end program bmi_main
