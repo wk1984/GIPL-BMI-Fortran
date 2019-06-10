@@ -23,7 +23,7 @@ program bmi_main
     integer :: out_grid_id1, out_grid_size1, out_grid_rank1
     integer :: soil_nodes_number
 
-    real :: x, obs1 , obs2, obs3, obs4, obs5, obs6
+    real :: x, obs1, obs2, obs3, obs4, obs5, obs6
 
     character(len = 10) var_unit1, var_unit2, var_unit3
     character(len = 10) var_unit4, unit5, unit6
@@ -54,119 +54,118 @@ program bmi_main
     ENDIF
 
     s = model%initialize(fconfig)
-    
+
     if (s .eq. 1) then
-    
-    write(*, "(a)") "Error"
-    
+
+        write(*, "(a)") "Error"
+
     else
-    
-    write(*, "(a)") "Initialized"
 
-    ! Get time variables:
-    s = model%get_current_time(current_time)
-    s = model%get_end_time(end_time)
+        write(*, "(a)") "Initialized"
 
-    ! Get soil depth variables:
-    s = model%get_var_itemsize(out_name1, soil_nodes_number)
-    print*, 'Total soil nodes:', soil_nodes_number
+        ! Get time variables:
+        s = model%get_current_time(current_time)
+        s = model%get_end_time(end_time)
 
-    allocate(soil_temperature(soil_nodes_number))
+        ! Get soil depth variables:
+        s = model%get_var_itemsize(out_name1, soil_nodes_number)
+        print*, 'Total soil nodes:', soil_nodes_number
 
-    ! Get air temperature
-    s = model%get_var_grid(var_name1, grid_id1)
-    s = model%get_grid_size(grid_id1, grid_size1)
-    s = model%get_var_units(var_name1, var_unit1)
+        allocate(soil_temperature(soil_nodes_number))
 
-    ! Get snow depth
-    s = model%get_var_grid(var_name2, grid_id2)
-    s = model%get_grid_size(grid_id2, grid_size2)
-    s = model%get_var_units(var_name2, var_unit2)
+        ! Get air temperature
+        s = model%get_var_grid(var_name1, grid_id1)
+        s = model%get_grid_size(grid_id1, grid_size1)
+        s = model%get_var_units(var_name1, var_unit1)
 
-    ! Get snow thermal conductivity
-    s = model%get_var_grid(var_name3, grid_id3)
-    s = model%get_grid_size(grid_id3, grid_size3)
-    s = model%get_var_units(var_name3, var_unit3)
+        ! Get snow depth
+        s = model%get_var_grid(var_name2, grid_id2)
+        s = model%get_grid_size(grid_id2, grid_size2)
+        s = model%get_var_units(var_name2, var_unit2)
 
-    ! Get snow thermal conductivity
-    s = model%get_var_grid(var_name4, grid_id4)
-    s = model%get_grid_size(grid_id4, grid_size4)
-    s = model%get_var_units(var_name4, var_unit4)
+        ! Get snow thermal conductivity
+        s = model%get_var_grid(var_name3, grid_id3)
+        s = model%get_grid_size(grid_id3, grid_size3)
+        s = model%get_var_units(var_name3, var_unit3)
 
-    print*, grid_id4
+        ! Get snow thermal conductivity
+        s = model%get_var_grid(var_name4, grid_id4)
+        s = model%get_grid_size(grid_id4, grid_size4)
+        s = model%get_var_units(var_name4, var_unit4)
 
-    ! Get soil temperatures
-    s = model%get_var_grid(out_name1, out_grid_id1)
-    s = model%get_grid_rank(out_grid_id1, out_grid_rank1)
-    s = model%get_grid_size(out_grid_id1, out_grid_size1)
-    s = model%get_var_units(out_name1, out_var_unit1)
-    s = model%get_grid_shape(out_grid_id1, out_grid_shape1)
+        print*, grid_id4
 
-    print*, 'Soil Temperature [size]', grid_size3
-    print*, 'Soil Temperature [rank]', out_grid_rank1
-    print*, 'Soil Temperature [shape]', out_grid_shape1
+        ! Get soil temperatures
+        s = model%get_var_grid(out_name1, out_grid_id1)
+        s = model%get_grid_rank(out_grid_id1, out_grid_rank1)
+        s = model%get_grid_size(out_grid_id1, out_grid_size1)
+        s = model%get_var_units(out_name1, out_var_unit1)
+        s = model%get_grid_shape(out_grid_id1, out_grid_shape1)
 
-    write(*, '("Initial Time  = ",f0.1)') current_time
-    write(*, '("Final Time    = ",f0.1)') end_time
+        print*, 'Soil Temperature [size]', grid_size3
+        print*, 'Soil Temperature [rank]', out_grid_rank1
+        print*, 'Soil Temperature [shape]', out_grid_shape1
 
-    allocate(temperature(grid_size1))
-    allocate(snow_depth(grid_size2))
-    allocate(snow_conductivity(grid_size3))
+        write(*, '("Initial Time  = ",f0.1)') current_time
+        write(*, '("Final Time    = ",f0.1)') end_time
 
-    open(1991, file = 'origin_out/result.txt.txt', status = 'OLD') ! open the benchmark output
+        allocate(temperature(grid_size1))
+        allocate(snow_depth(grid_size2))
+        allocate(snow_conductivity(grid_size3))
 
-    write(*, *) 'Compare with benchmark ... '
+        open(1991, file = 'origin_out/result.txt.txt', status = 'OLD') ! open the benchmark output
 
-    write(*, '(A5, 1x, A8, 1X, A8, 1X,A8, 1X,A8, 1X,A8, 1X,A8)'), 'T', 'Tair', 'Snow', '0.001m', 'Tg 0.08m', 'Tg 0.12m', &
-            'Tg 0.20m'
+        write(*, *) 'Compare with benchmark ... '
 
-    do i = 1, int(end_time)
+        write(*, '(A5, 1x, A8, 1X, A8, 1X,A8, 1X,A8, 1X,A8, 1X,A8)'), 'T', 'Tair', 'Snow', '0.001m', 'Tg 0.08m', 'Tg 0.12m', &
+                'Tg 0.20m'
 
-        if (i .eq. 95) then ! change air temperature at the 5th time step.
+        do i = 1, int(end_time)
 
-!            s = model%set_value('land_surface_air__temperature', [-5.0])
+            if (i .eq. 95) then ! change air temperature at the 5th time step.
 
-        end if
+                !            s = model%set_value('land_surface_air__temperature', [-5.0])
 
-        if (i .eq. 100) then ! change snow depth at the 100th time step.
+            end if
 
-!            s = model%set_value('snowpack__depth', [0.1])
+            if (i .eq. 100) then ! change snow depth at the 100th time step.
 
-        end if
+                !            s = model%set_value('snowpack__depth', [0.1])
 
-        if (i .eq. 110) then ! change snow thermal conductivity at the 110th time step.
+            end if
 
-!             s = model%set_value('snow__thermal_conductivity', [0.01])
+            if (i .eq. 110) then ! change snow thermal conductivity at the 110th time step.
 
-        end if
-        
-        s = model%get_value(var_name1, temperature)
-        s = model%get_value(var_name2, snow_depth)
-        s = model%get_value(var_name3, snow_conductivity)
-        
-        s = model%update()       
-        
-        s = model%get_value(out_name1, soil_temperature)
+                !             s = model%set_value('snow__thermal_conductivity', [0.01])
 
-        read(1991,*) x, x, obs5, obs6, obs1, obs2, obs3, obs4
+            end if
 
-        if ((i .le. 130) .and. (i .ge. 91)) then
+            s = model%get_value(var_name1, temperature)
+            s = model%get_value(var_name2, snow_depth)
+            s = model%get_value(var_name3, snow_conductivity)
 
-            write(*, '(I5, 1x, F8.3, 1X, F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3)'), &
-                    i, temperature - obs5, snow_depth -obs6, &
-                    soil_temperature(40) - obs1, &
-                    soil_temperature(48) - obs2, &
-                    soil_temperature(50) - obs3, &
-                    soil_temperature(54) - obs4
+            s = model%update()
 
-        end if
-    enddo
+            s = model%get_value(out_name1, soil_temperature)
 
-    s = model%finalize()
+            read(1991, *) x, x, obs5, obs6, obs1, obs2, obs3, obs4
 
-    close(1991)
-    
+            if ((i .le. 130) .and. (i .ge. 91)) then
+
+                write(*, '(I5, 1x, F8.3, 1X, F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3)'), &
+                        i, temperature - obs5, snow_depth - obs6, &
+                        soil_temperature(40) - obs1, &
+                        soil_temperature(48) - obs2, &
+                        soil_temperature(50) - obs3, &
+                        soil_temperature(54) - obs4
+
+            end if
+        enddo
+
+        s = model%finalize()
+
+        close(1991)
+
     endif
-
 
 end program bmi_main
