@@ -62,6 +62,8 @@ program bmi_main
     else
 
         write(*, "(a)") "Initialized"
+        
+        s = model%set_value('write_or_not',[1])
 
         ! Get time variables:
         s = model%get_current_time(current_time)
