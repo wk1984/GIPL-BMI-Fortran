@@ -403,7 +403,7 @@ contains
             grid_spacing = [self%model%dx]
             bmi_status = BMI_SUCCESS
         case(2)
-            grid_spacing = [self%model%dy, self%model%dx, self%model%dz0]
+            grid_spacing = [self%model%dy, self%model%dx, self%model%dz]
             bmi_status = BMI_SUCCESS
         case default
             grid_spacing = [-1.d0]
