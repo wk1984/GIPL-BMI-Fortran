@@ -549,8 +549,6 @@ contains
         call filexist(file_organic, status)
         if (status .eq. 1) then
         
-        print*, status
-
         open(60, FILE = file_sites)
         read(60, *) n_site
         allocate(snow_code(n_site), STAT = IERR)
@@ -890,6 +888,9 @@ contains
         model%dx           = 1
         model%dy           = 1
         model%dz0          = 1
+        
+        model%time_beg     = n_time * time_beg
+        model%time_end     = n_time * time_end
         
         model%initialize_status = 1
 
