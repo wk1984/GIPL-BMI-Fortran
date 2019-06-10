@@ -893,6 +893,10 @@ contains
         model%time_end     = n_time * time_end
         
         model%initialize_status = 1
+        
+        model % tair_cur  = utemp(model % top_run_time,1)
+        model % snd_cur   = snd(model % top_run_time,1)
+        model % stcon_cur = stcon(model % top_run_time,1)
 
         !        model%write_outputs_or_not = 0 ! 1: write out to file, 0: not.
         endif
