@@ -37,7 +37,6 @@ contains
     integer :: i, code
 
     status = m%initialize(config_file)
-    status = m%update()
     status = m%get_value(var_name, tval)
     status = m%finalize()
     
@@ -65,7 +64,6 @@ contains
     integer :: i, code
 
     status = m%initialize(config_file)
-    status = m%update()
     status = m%get_value(var_name, tval)
     status = m%finalize()
     
@@ -93,7 +91,6 @@ contains
     integer :: i, code
 
     status = m%initialize(config_file)
-    status = m%update()
     status = m%get_value(var_name, tval)
     status = m%finalize()
     
