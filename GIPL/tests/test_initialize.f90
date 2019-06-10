@@ -13,10 +13,9 @@ program test_initialize
   real*8 :: end_time
 
   status1 = m%initialize(config_file1)
-  s = m%get_end_time(end_time)
   status = m%finalize()
-  if (status1.ne.BMI_SUCCESS) then
-     stop 1
+    if (status1.ne.BMI_SUCCESS) then
+     stop
   end if
 
 end program test_initialize
