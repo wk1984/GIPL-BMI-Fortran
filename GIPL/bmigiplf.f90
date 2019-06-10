@@ -140,11 +140,11 @@ contains
 
         if (len(config_file) > 0) then
             call initialize(self%model, config_file)
-            
+
             if (self%model%initialize_status .eq. 1) then
-            bmi_status = BMI_SUCCESS
+                bmi_status = BMI_SUCCESS
             else
-            bmi_status = BMI_FAILURE
+                bmi_status = BMI_FAILURE
             endif
         else
             bmi_status = BMI_FAILURE
@@ -207,19 +207,19 @@ contains
         class (bmi_gipl), intent(in) :: self
         character (len = *), intent(out) :: time_units
         integer :: bmi_status
-        
+
         time_units = "second"
-        
+
         if (self%model%n_sec_day .eq. dble(86400.)) then
-        time_units = "day"
+            time_units = "day"
         endif
         if(self%model%n_sec_day .eq. dble(2628000.)) then
-        time_units = "month"
+            time_units = "month"
         endif
         if(self%model%n_sec_day .eq. dble(3600.)) then
-        time_units = "hour"
+            time_units = "hour"
         endif
-        
+
         bmi_status = BMI_SUCCESS
     end function gipl_time_units
 
@@ -670,7 +670,7 @@ contains
             bmi_status = BMI_SUCCESS
         case("model_soil_layer__count")
             dest = [self%model%n_z]
-            bmi_status = BMI_SUCCESS        
+            bmi_status = BMI_SUCCESS
         case default
             dest = [-1]
             bmi_status = BMI_FAILURE
@@ -845,7 +845,7 @@ contains
         case("snowpack__depth")
             self%model%snd(self%model % top_run_time, 1) = src(1)
             bmi_status = BMI_SUCCESS
-         case("snow__thermal_conductivity")
+        case("snow__thermal_conductivity")
             self%model%stcon(self%model % top_run_time, 1) = src(1)
             bmi_status = BMI_SUCCESS
         case default
