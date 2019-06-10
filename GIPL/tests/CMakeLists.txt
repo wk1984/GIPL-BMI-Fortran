@@ -13,6 +13,7 @@ make_test(test_get_component_name)
 make_test(test_initialize)
 make_test(test_get_current_time)
 make_test(test_get_end_time)
+make_test(test_get_input_var_names)
 
 file(
   COPY ${CMAKE_CURRENT_SOURCE_DIR}/test.cfg
