@@ -11,6 +11,10 @@ endfunction(make_test)
 
 make_test(test_get_component_name)
 make_test(test_initialize)
+make_test(test_get_value)
+make_test(test_set_value)
+make_test(test_update)
+
 make_test(test_get_current_time)
 make_test(test_get_end_time)
 make_test(test_get_start_time)
@@ -18,8 +22,6 @@ make_test(test_get_time_step)
 make_test(test_get_input_var_names)
 make_test(test_get_output_var_names)
 make_test(test_get_time_units)
-make_test(test_get_value)
-make_test(test_set_value)
 
 file(
   COPY ${CMAKE_CURRENT_SOURCE_DIR}/test.cfg
