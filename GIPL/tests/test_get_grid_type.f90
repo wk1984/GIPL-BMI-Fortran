@@ -8,7 +8,7 @@ program test_get_grid_type
 
   integer, parameter :: grid_id = 0
   character (len=*), parameter :: &
-       expected_type = "uniform_rectilinear"
+       expected_type = "rectilinear"
 
   type (bmi_gipl) :: m
   character (len=BMI_MAX_TYPE_NAME) :: grid_type
