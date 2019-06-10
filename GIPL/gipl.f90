@@ -108,11 +108,11 @@ module gipl_model
         real*8 :: top_run_time
         integer :: write_outputs_or_not !1: write out to file, 0: not.
         real*8 :: dt
-        integer:: n_x, n_y, n_z
-        real*8 :: dx,  dy,  dz0
-        
+        integer :: n_x, n_y, n_z
+        real*8 :: dx, dy, dz0
+
         real*8 :: tair_cur, snd_cur, stcon_cur
-        
+
         integer :: initialize_status !1: pass, 0: failure.
 
         ! copy from const
@@ -329,9 +329,9 @@ contains
         ! To be checked. (Kang, 2019-6-6)
         ! Seems function 'SNOWFIX' is that problem. Remove this, the example outputs
         ! are same. To be confirmed. (Kang, 2019-6-7)
-        
+
         if (abs(time_step - model%time_step) .ne. 0) then
-        time_step = model%time_step
+            time_step = model%time_step
         endif
 
         if ((maxval(abs(utemp - model%utemp)) .ne. 0) .or. &
@@ -372,7 +372,7 @@ contains
             hcap_thw = model%hcap_thw
             tcon_frz = model%tcon_frz
             tcon_thw = model%tcon_thw
-            
+
             ! recalculate phase change temperature by using vwc, and unfrozen water a & b
 
             do i_site = 1, n_site
@@ -382,7 +382,7 @@ contains
             end do
 
             hcscale = zdepth(n_grd) * zdepth(n_grd) / n_sec_day
-            
+
             ! updating scales ... ...
 
             hcap_frz = hcap_frz * hcscale
@@ -393,8 +393,8 @@ contains
         end if
 
         !=========
-        
-!        i_time = 1
+
+        !        i_time = 1
 
         if (model % top_run_time .eq. 1) then
             time_loop = model % top_run_time - 1
@@ -443,16 +443,15 @@ contains
                 enddo
             endif
         endif
-        
-        
-        model % tair_cur  = utemp(model % top_run_time,1)
-        model % snd_cur   = snd(model % top_run_time,1)
-        model % stcon_cur = stcon(model % top_run_time,1)
+
+        model % tair_cur = utemp(model % top_run_time, 1)
+        model % snd_cur = snd(model % top_run_time, 1)
+        model % stcon_cur = stcon(model % top_run_time, 1)
 
         model % top_run_time = model % top_run_time + 1 * time_step
 
         model % RES = RES
-        
+
     end subroutine update
 
     subroutine initialize(model, fconfig)
@@ -492,429 +491,429 @@ contains
 
         call filexist(fconfig, status)
         if (status .eq. 1) then
-        open(60, file = fconfig)
-        !read input files
-        read(60, '(A)') stdummy
-        read(60, '(A)') file_sites
-        read(60, '(A)') file_bound
-        read(60, '(A)') file_snow
-        read(60, '(A)') file_rsnow
-        read(60, '(A)') file_init
-        !read(60,'(A)')cmdf
-        read(60, '(A)') file_grid
-        read(60, '(A)') file_organic
-        read(60, '(A)') file_mineral
+            open(60, file = fconfig)
+            !read input files
+            read(60, '(A)') stdummy
+            read(60, '(A)') file_sites
+            read(60, '(A)') file_bound
+            read(60, '(A)') file_snow
+            read(60, '(A)') file_rsnow
+            read(60, '(A)') file_init
+            !read(60,'(A)')cmdf
+            read(60, '(A)') file_grid
+            read(60, '(A)') file_organic
+            read(60, '(A)') file_mineral
 
-        ! read output files
-        read(60, '(A)') stdummy
-        read(60, '(A)') stdummy
-        read(60, '(A)') aver_res_file
-        read(60, '(A)') result_file
-        read(60, '(A)') restart_file
+            ! read output files
+            read(60, '(A)') stdummy
+            read(60, '(A)') stdummy
+            read(60, '(A)') aver_res_file
+            read(60, '(A)') result_file
+            read(60, '(A)') restart_file
 
-        ! read input parameters
-        read(60, '(A)') stdummy
-        read(60, '(A)') stdummy
-        read(60, *) restart
-        read(60, '(A)') stdummy
-        read(60, *) time_step, TAUM, TMIN
-        read(60, '(A)') stdummy
-        read(60, *) time_beg, time_end
-        read(60, '(A)') stdummy
-        read(60, *) smooth_coef, unf_water_coef, itmax !smoothing factor | unfrozen water parameter | max number of iterations
-        read(60, '(A)') stdummy
-        read(60, *) n_sec_day, n_time ! number of second in a day [sec] | number of time steps (in the example number of days in a year )
-        read(60, '(A)') stdummy
-        read(60, *) sea_level, n_frz_max
-        read(60, '(A)') stdummy
-        read(60, *) frz_frn_min, frz_frn_max
-        read(60, '(A)') stdummy
-        read(60, *) sat_coef
+            ! read input parameters
+            read(60, '(A)') stdummy
+            read(60, '(A)') stdummy
+            read(60, *) restart
+            read(60, '(A)') stdummy
+            read(60, *) time_step, TAUM, TMIN
+            read(60, '(A)') stdummy
+            read(60, *) time_beg, time_end
+            read(60, '(A)') stdummy
+            read(60, *) smooth_coef, unf_water_coef, itmax !smoothing factor | unfrozen water parameter | max number of iterations
+            read(60, '(A)') stdummy
+            read(60, *) n_sec_day, n_time ! number of second in a day [sec] | number of time steps (in the example number of days in a year )
+            read(60, '(A)') stdummy
+            read(60, *) sea_level, n_frz_max
+            read(60, '(A)') stdummy
+            read(60, *) frz_frn_min, frz_frn_max
+            read(60, '(A)') stdummy
+            read(60, *) sat_coef
 
-        close(60)
+            close(60)
 
-        ! pass values to model interface:
+            ! pass values to model interface:
 
-        model%n_sec_day = n_sec_day
-        model%restart = restart
-        model%time_step = time_step
-        model%n_time = n_time
+            model%n_sec_day = n_sec_day
+            model%restart = restart
+            model%time_step = time_step
+            model%n_time = n_time
 
-        call filexist(file_sites, status)
-        if (status .eq. 1) then
-        call filexist(file_bound, status)
-        if (status .eq. 1) then
-        call filexist(file_snow, status)
-        if (status .eq. 1) then
-        call filexist(file_rsnow, status)
-        if (status .eq. 1) then
-        call filexist(file_grid, status)
-        if (status .eq. 1) then
-        call filexist(file_init, status)
-        if (status .eq. 1) then
-        call filexist(file_mineral, status)
-        if (status .eq. 1) then
-        call filexist(file_organic, status)
-        if (status .eq. 1) then
-        
-        open(60, FILE = file_sites)
-        read(60, *) n_site
-        allocate(snow_code(n_site), STAT = IERR)
-        allocate(veg_code(n_site), STAT = IERR)
-        allocate(geo_code(n_site), STAT = IERR)
-        allocate(gt_zone_code(n_site), STAT = IERR)
-        allocate(temp_grd(n_site), STAT = IERR)
-        allocate(idx_site(n_site), STAT = IERR)
-        read(60, *)
-        do i_site = 1, n_site
-            read(60, *) IREAD, snow_code(i_site), veg_code(i_site), geo_code(i_site), &
-                    gt_zone_code(i_site), temp_grd(i_site)
+            call filexist(file_sites, status)
+            if (status .eq. 1) then
+                call filexist(file_bound, status)
+                if (status .eq. 1) then
+                    call filexist(file_snow, status)
+                    if (status .eq. 1) then
+                        call filexist(file_rsnow, status)
+                        if (status .eq. 1) then
+                            call filexist(file_grid, status)
+                            if (status .eq. 1) then
+                                call filexist(file_init, status)
+                                if (status .eq. 1) then
+                                    call filexist(file_mineral, status)
+                                    if (status .eq. 1) then
+                                        call filexist(file_organic, status)
+                                        if (status .eq. 1) then
 
-            idx_site(i_site) = IREAD
+                                            open(60, FILE = file_sites)
+                                            read(60, *) n_site
+                                            allocate(snow_code(n_site), STAT = IERR)
+                                            allocate(veg_code(n_site), STAT = IERR)
+                                            allocate(geo_code(n_site), STAT = IERR)
+                                            allocate(gt_zone_code(n_site), STAT = IERR)
+                                            allocate(temp_grd(n_site), STAT = IERR)
+                                            allocate(idx_site(n_site), STAT = IERR)
+                                            read(60, *)
+                                            do i_site = 1, n_site
+                                                read(60, *) IREAD, snow_code(i_site), veg_code(i_site), geo_code(i_site), &
+                                                        gt_zone_code(i_site), temp_grd(i_site)
 
-        enddo
-        close(60)
-        !   print*, trim(file_sites),' has been read'
+                                                idx_site(i_site) = IREAD
 
-        model%n_site = n_site
+                                            enddo
+                                            close(60)
+                                            !   print*, trim(file_sites),' has been read'
 
-        open(60, file = file_bound)
-        read(60, *) n_temp
-        allocate(utemp_time(n_temp), STAT = IERR)
-        allocate(utemp(n_temp, n_site), STAT = IERR)
-        do i = 1, n_temp
-            read(60, *) utemp_time(I), (utemp(I, i_site), i_site = 1, n_site)
-        enddo
-        close(60)
-        !   print*,trim(file_bound),' has been read'
+                                            model%n_site = n_site
 
-        ! pass upper boundary to model interface
+                                            open(60, file = file_bound)
+                                            read(60, *) n_temp
+                                            allocate(utemp_time(n_temp), STAT = IERR)
+                                            allocate(utemp(n_temp, n_site), STAT = IERR)
+                                            do i = 1, n_temp
+                                                read(60, *) utemp_time(I), (utemp(I, i_site), i_site = 1, n_site)
+                                            enddo
+                                            close(60)
+                                            !   print*,trim(file_bound),' has been read'
 
-        allocate(model%utemp_time(n_temp), STAT = IERR)
-        allocate(model%utemp(n_temp, n_site), STAT = IERR)
+                                            ! pass upper boundary to model interface
 
-        open(60, file = file_rsnow)
-        read(60, *) n_stcon
-        allocate(stcon_time(n_stcon), STAT = IERR)
-        allocate(stcon(n_stcon, n_site), STAT = IERR)
-        do i = 1, n_stcon
-            read(60, *) stcon_time(i), (stcon(i, i_site), i_site = 1, n_site)
-        enddo
-        close(60)
-        !   print*,trim(file_rsnow),' has been read'
+                                            allocate(model%utemp_time(n_temp), STAT = IERR)
+                                            allocate(model%utemp(n_temp, n_site), STAT = IERR)
 
-        ! pass upper boundary to model interface
+                                            open(60, file = file_rsnow)
+                                            read(60, *) n_stcon
+                                            allocate(stcon_time(n_stcon), STAT = IERR)
+                                            allocate(stcon(n_stcon, n_site), STAT = IERR)
+                                            do i = 1, n_stcon
+                                                read(60, *) stcon_time(i), (stcon(i, i_site), i_site = 1, n_site)
+                                            enddo
+                                            close(60)
+                                            !   print*,trim(file_rsnow),' has been read'
 
-        allocate(model%stcon_time(n_stcon), STAT = IERR)
-        allocate(model%stcon(n_stcon, n_site), STAT = IERR)
+                                            ! pass upper boundary to model interface
 
-        open(60, file = file_snow)
-        read(60, *) n_snow
-        allocate(snd_time(n_snow), STAT = IERR)
-        allocate(snd(n_snow, n_site), STAT = IERR)
-        do I = 1, n_snow
-            read(60, *) snd_time(i), (snd(i, i_site), i_site = 1, n_site)
-        enddo
-        close(60)
-        !   print*,trim(file_snow),' has been read'
+                                            allocate(model%stcon_time(n_stcon), STAT = IERR)
+                                            allocate(model%stcon(n_stcon, n_site), STAT = IERR)
 
-        ! pass upper boundary to model interface
+                                            open(60, file = file_snow)
+                                            read(60, *) n_snow
+                                            allocate(snd_time(n_snow), STAT = IERR)
+                                            allocate(snd(n_snow, n_site), STAT = IERR)
+                                            do I = 1, n_snow
+                                                read(60, *) snd_time(i), (snd(i, i_site), i_site = 1, n_site)
+                                            enddo
+                                            close(60)
+                                            !   print*,trim(file_snow),' has been read'
 
-        allocate(model%snd_time(n_snow), STAT = IERR)
-        allocate(model%snd(n_snow, n_site), STAT = IERR)
+                                            ! pass upper boundary to model interface
 
-        open(60, file = file_init, action = 'read')
-        read(60, *) z_num, n_ini!,time_restart
-        allocate(zdepth_ini(n_ini), STAT = IERR)
-        allocate(ztemp_ini(n_ini, n_site), STAT = IERR)
-        allocate(gtzone(n_ini, z_num + 1), STAT = IERR)
-        read(60, *) stdummy
-        do i = 1, n_ini
-            read(60, *) (gtzone(i, j), j = 1, z_num + 1)
-        enddo
-        close(60)
-        !   print*,trim(file_init),'has been read'
+                                            allocate(model%snd_time(n_snow), STAT = IERR)
+                                            allocate(model%snd(n_snow, n_site), STAT = IERR)
 
-        allocate(model%zdepth_ini(n_ini), STAT = IERR)
-        allocate(model%ztemp_ini(n_ini, n_site), STAT = IERR)
+                                            open(60, file = file_init, action = 'read')
+                                            read(60, *) z_num, n_ini!,time_restart
+                                            allocate(zdepth_ini(n_ini), STAT = IERR)
+                                            allocate(ztemp_ini(n_ini, n_site), STAT = IERR)
+                                            allocate(gtzone(n_ini, z_num + 1), STAT = IERR)
+                                            read(60, *) stdummy
+                                            do i = 1, n_ini
+                                                read(60, *) (gtzone(i, j), j = 1, z_num + 1)
+                                            enddo
+                                            close(60)
+                                            !   print*,trim(file_init),'has been read'
 
-        time_restart = utemp_time(1)
-        zdepth_ini(:) = gtzone(:, 1)
-        do i = 1, n_site
-            k = gt_zone_code(i)
-            ztemp_ini(:, I) = gtzone(:, k + 1)
-        enddo
+                                            allocate(model%zdepth_ini(n_ini), STAT = IERR)
+                                            allocate(model%ztemp_ini(n_ini, n_site), STAT = IERR)
 
-        model%time_restart = time_restart
+                                            time_restart = utemp_time(1)
+                                            zdepth_ini(:) = gtzone(:, 1)
+                                            do i = 1, n_site
+                                                k = gt_zone_code(i)
+                                                ztemp_ini(:, I) = gtzone(:, k + 1)
+                                            enddo
 
-        open(60, file = file_grid)
-        read(60, *) n_grd
-        allocate(zdepth(n_grd), STAT = IERR)
-        do i = 1, n_grd
-            read(60, *) zdepth(i)
-        enddo
-        read(60, *) m_grd
-        allocate(zdepth_id(m_grd), STAT = IERR)
-        do j = 1, m_grd
-            read(60, *) zdepth_id(j)
-        enddo
-        close(60)
-        !   print*,trim(file_grid),' has been read'
+                                            model%time_restart = time_restart
 
-        model%n_grd = n_grd
-        model%m_grd = m_grd
+                                            open(60, file = file_grid)
+                                            read(60, *) n_grd
+                                            allocate(zdepth(n_grd), STAT = IERR)
+                                            do i = 1, n_grd
+                                                read(60, *) zdepth(i)
+                                            enddo
+                                            read(60, *) m_grd
+                                            allocate(zdepth_id(m_grd), STAT = IERR)
+                                            do j = 1, m_grd
+                                                read(60, *) zdepth_id(j)
+                                            enddo
+                                            close(60)
+                                            !   print*,trim(file_grid),' has been read'
 
-        allocate(model%zdepth(n_grd), STAT = IERR)
-        allocate(model%zdepth_id(m_grd), STAT = IERR)
+                                            model%n_grd = n_grd
+                                            model%m_grd = m_grd
 
-        ! note: that all max n_lay_cur layers has to be read or it will a give segmantation error
-        !      n_lay=10!MAXVAL(n_lay_cur)
-        !----------------------------------------------------
-        open (60, file = file_organic)
-        read(60, *) vln ! reads numbers of  classes
-        allocate(A1(n_lay, vln), STAT = IERR) ! vwc
-        allocate(A2(n_lay, vln), STAT = IERR) ! a_coef
-        allocate(A3(n_lay, vln), STAT = IERR) ! b_coef
-        allocate(A4(n_lay, vln), STAT = IERR) ! hcap_frz
-        allocate(A5(n_lay, vln), STAT = IERR) !hcap_thw
-        allocate(A6(n_lay, vln), STAT = IERR) !tcon_frz
-        allocate(A7(n_lay, vln), STAT = IERR) !tcon_thw
-        allocate(A8(vln, n_lay), STAT = IERR) !bot_cond
-        allocate(veg_class(vln), STAT = IERR) !veg_class
-        allocate(num_vl(vln), STAT = IERR) !num_vl number of vegetation layers
-        do I = 1, vln
-            read(60, *) veg_class(i), num_vl(i)
-            do j = 1, num_vl(i)
-                read(60, *) A1(J, I), A2(J, I), A3(J, I), &
-                        A4(J, I), A5(J, I), A6(J, I), A7(J, I), A8(I, J)
-            enddo
-        enddo
-        close(60)
-        !   print*,trim(file_organic),' has been read'
+                                            allocate(model%zdepth(n_grd), STAT = IERR)
+                                            allocate(model%zdepth_id(m_grd), STAT = IERR)
 
-        open (60, file = file_mineral)
-        read(60, *) gln ! reads numbers of  classes
-        allocate(B1(n_lay, gln), STAT = IERR) ! vwc
-        allocate(B2(n_lay, gln), STAT = IERR) ! a_coef
-        allocate(B3(n_lay, gln), STAT = IERR) ! b_coef
-        allocate(B4(n_lay, gln), STAT = IERR) ! hcap_frz
-        allocate(B5(n_lay, gln), STAT = IERR) !hcap_thw
-        allocate(B6(n_lay, gln), STAT = IERR) !tcon_frz
-        allocate(B7(n_lay, gln), STAT = IERR) !tcon_thw
-        allocate(B8(gln, n_lay), STAT = IERR) !bot_cond
-        allocate(geo_class(gln), STAT = IERR) !geo_class
-        allocate(num_gl(gln), STAT = IERR) !num_vl number of lithologic layers
-        do I = 1, gln
-            read(60, *) geo_class(i), num_gl(i)
-            do j = 1, num_gl(i)
-                read(60, *) B1(J, I), B2(J, I), B3(J, I), &
-                        B4(J, I), B5(J, I), B6(J, I), B7(J, I), B8(I, J)
-            enddo
-        enddo
-        close(60)
-        !      print*,trim(file_mineral),' has been read'
+                                            ! note: that all max n_lay_cur layers has to be read or it will a give segmantation error
+                                            !      n_lay=10!MAXVAL(n_lay_cur)
+                                            !----------------------------------------------------
+                                            open (60, file = file_organic)
+                                            read(60, *) vln ! reads numbers of  classes
+                                            allocate(A1(n_lay, vln), STAT = IERR) ! vwc
+                                            allocate(A2(n_lay, vln), STAT = IERR) ! a_coef
+                                            allocate(A3(n_lay, vln), STAT = IERR) ! b_coef
+                                            allocate(A4(n_lay, vln), STAT = IERR) ! hcap_frz
+                                            allocate(A5(n_lay, vln), STAT = IERR) !hcap_thw
+                                            allocate(A6(n_lay, vln), STAT = IERR) !tcon_frz
+                                            allocate(A7(n_lay, vln), STAT = IERR) !tcon_thw
+                                            allocate(A8(vln, n_lay), STAT = IERR) !bot_cond
+                                            allocate(veg_class(vln), STAT = IERR) !veg_class
+                                            allocate(num_vl(vln), STAT = IERR) !num_vl number of vegetation layers
+                                            do I = 1, vln
+                                                read(60, *) veg_class(i), num_vl(i)
+                                                do j = 1, num_vl(i)
+                                                    read(60, *) A1(J, I), A2(J, I), A3(J, I), &
+                                                            A4(J, I), A5(J, I), A6(J, I), A7(J, I), A8(I, J)
+                                                enddo
+                                            enddo
+                                            close(60)
+                                            !   print*,trim(file_organic),' has been read'
 
-        allocate(vwc(n_lay, n_site), STAT = IERR)
-        allocate(a_coef(n_lay, n_site), STAT = IERR)
-        allocate(b_coef(n_lay, n_site), STAT = IERR)
-        allocate(EE(n_lay, n_site), STAT = IERR)
-        allocate(hcap_frz(n_lay, n_site), STAT = IERR)
-        allocate(hcap_thw(n_lay, n_site), STAT = IERR)
-        allocate(tcon_frz(n_lay, n_site), STAT = IERR)
-        allocate(tcon_thw(n_lay, n_site), STAT = IERR)
-        allocate(n_lay_cur(n_site), STAT = IERR)
-        allocate(n_bnd_lay(n_site, n_lay + 1), STAT = IERR)
+                                            open (60, file = file_mineral)
+                                            read(60, *) gln ! reads numbers of  classes
+                                            allocate(B1(n_lay, gln), STAT = IERR) ! vwc
+                                            allocate(B2(n_lay, gln), STAT = IERR) ! a_coef
+                                            allocate(B3(n_lay, gln), STAT = IERR) ! b_coef
+                                            allocate(B4(n_lay, gln), STAT = IERR) ! hcap_frz
+                                            allocate(B5(n_lay, gln), STAT = IERR) !hcap_thw
+                                            allocate(B6(n_lay, gln), STAT = IERR) !tcon_frz
+                                            allocate(B7(n_lay, gln), STAT = IERR) !tcon_thw
+                                            allocate(B8(gln, n_lay), STAT = IERR) !bot_cond
+                                            allocate(geo_class(gln), STAT = IERR) !geo_class
+                                            allocate(num_gl(gln), STAT = IERR) !num_vl number of lithologic layers
+                                            do I = 1, gln
+                                                read(60, *) geo_class(i), num_gl(i)
+                                                do j = 1, num_gl(i)
+                                                    read(60, *) B1(J, I), B2(J, I), B3(J, I), &
+                                                            B4(J, I), B5(J, I), B6(J, I), B7(J, I), B8(I, J)
+                                                enddo
+                                            enddo
+                                            close(60)
+                                            !      print*,trim(file_mineral),' has been read'
 
-        allocate(model%vwc(n_lay, n_site), STAT = IERR)
-        allocate(model%a_coef(n_lay, n_site), STAT = IERR)
-        allocate(model%b_coef(n_lay, n_site), STAT = IERR)
-        allocate(model%EE(n_lay, n_site), STAT = IERR)
-        allocate(model%hcap_frz(n_lay, n_site), STAT = IERR)
-        allocate(model%hcap_thw(n_lay, n_site), STAT = IERR)
-        allocate(model%tcon_frz(n_lay, n_site), STAT = IERR)
-        allocate(model%tcon_thw(n_lay, n_site), STAT = IERR)
-        allocate(model%n_lay_cur(n_site), STAT = IERR)
-        allocate(model%n_bnd_lay(n_site, n_lay + 1), STAT = IERR)
+                                            allocate(vwc(n_lay, n_site), STAT = IERR)
+                                            allocate(a_coef(n_lay, n_site), STAT = IERR)
+                                            allocate(b_coef(n_lay, n_site), STAT = IERR)
+                                            allocate(EE(n_lay, n_site), STAT = IERR)
+                                            allocate(hcap_frz(n_lay, n_site), STAT = IERR)
+                                            allocate(hcap_thw(n_lay, n_site), STAT = IERR)
+                                            allocate(tcon_frz(n_lay, n_site), STAT = IERR)
+                                            allocate(tcon_thw(n_lay, n_site), STAT = IERR)
+                                            allocate(n_lay_cur(n_site), STAT = IERR)
+                                            allocate(n_bnd_lay(n_site, n_lay + 1), STAT = IERR)
 
-        do i = 1, n_site
-            layer_thick = 0
-            n_bnd_lay(i, 1) = layer_thick
-            layer_thick = 0
-            n_bnd_lay(i, 1) = layer_thick
-            do j = 1, num_vl(veg_code(i))
-                vwc(J, I) = A1(j, veg_code(i));
-                a_coef(J, I) = A2(j, veg_code(i));
-                b_coef(J, I) = A3(j, veg_code(i));
-                hcap_thw(J, I) = A4(j, veg_code(i));
-                hcap_frz(J, I) = A5(j, veg_code(i));
-                tcon_thw(J, I) = A6(j, veg_code(i));
-                tcon_frz(J, I) = A7(j, veg_code(i));
-                if (j .eq. 1) then
-                    layer_thick = A8(veg_code(i), j)
-                else
-                    layer_thick = layer_thick + A8(veg_code(i), j);
+                                            allocate(model%vwc(n_lay, n_site), STAT = IERR)
+                                            allocate(model%a_coef(n_lay, n_site), STAT = IERR)
+                                            allocate(model%b_coef(n_lay, n_site), STAT = IERR)
+                                            allocate(model%EE(n_lay, n_site), STAT = IERR)
+                                            allocate(model%hcap_frz(n_lay, n_site), STAT = IERR)
+                                            allocate(model%hcap_thw(n_lay, n_site), STAT = IERR)
+                                            allocate(model%tcon_frz(n_lay, n_site), STAT = IERR)
+                                            allocate(model%tcon_thw(n_lay, n_site), STAT = IERR)
+                                            allocate(model%n_lay_cur(n_site), STAT = IERR)
+                                            allocate(model%n_bnd_lay(n_site, n_lay + 1), STAT = IERR)
+
+                                            do i = 1, n_site
+                                                layer_thick = 0
+                                                n_bnd_lay(i, 1) = layer_thick
+                                                layer_thick = 0
+                                                n_bnd_lay(i, 1) = layer_thick
+                                                do j = 1, num_vl(veg_code(i))
+                                                    vwc(J, I) = A1(j, veg_code(i));
+                                                    a_coef(J, I) = A2(j, veg_code(i));
+                                                    b_coef(J, I) = A3(j, veg_code(i));
+                                                    hcap_thw(J, I) = A4(j, veg_code(i));
+                                                    hcap_frz(J, I) = A5(j, veg_code(i));
+                                                    tcon_thw(J, I) = A6(j, veg_code(i));
+                                                    tcon_frz(J, I) = A7(j, veg_code(i));
+                                                    if (j .eq. 1) then
+                                                        layer_thick = A8(veg_code(i), j)
+                                                    else
+                                                        layer_thick = layer_thick + A8(veg_code(i), j);
+                                                    endif
+                                                    n_bnd_lay(i, j + 1) = layer_thick
+                                                    EE(J, I) = 0
+                                                    !	     write(*,'(3(f8.3),2(f12.1),3(f8.3))') vwc(J,I),a_coef(J,I),b_coef(J,I), &
+                                                    !		  hcap_thw(J,I),hcap_frz(J,I),tcon_thw(J,I),tcon_frz(J,I),n_bnd_lay(i,j+1)
+                                                enddo
+                                                k = 1
+                                                n_lay_cur(I) = num_vl(veg_code(i)) + num_gl(geo_code(i)) ! maximum number of soil layer = organic layers + mineral layers
+                                                do j = num_vl(veg_code(i)) + 1, n_lay_cur(I)
+                                                    vwc(J, I) = B1(k, geo_code(i));
+                                                    a_coef(J, I) = B2(k, geo_code(i));
+                                                    b_coef(J, I) = B3(k, geo_code(i));
+                                                    hcap_thw(J, I) = B4(k, geo_code(i));
+                                                    hcap_frz(J, I) = B5(k, geo_code(i));
+                                                    tcon_thw(J, I) = B6(k, geo_code(i));
+                                                    tcon_frz(J, I) = B7(k, geo_code(i));
+                                                    EE(J, I) = 0
+                                                    layer_thick = layer_thick + B8(geo_code(i), k);
+                                                    n_bnd_lay(i, j + 1) = layer_thick!B8(geo_code(i),j)
+                                                    k = k + 1
+                                                enddo
+                                                n_bnd_lay(i, n_lay_cur(I) + 1) = zdepth(n_grd)
+                                            enddo
+
+                                            allocate(z(n_grd), STAT = IERR)
+                                            allocate(dz(n_grd), STAT = IERR)
+                                            allocate(temp(n_site, n_grd), STAT = IERR)
+                                            allocate(lay_id(n_site, n_grd), STAT = IERR)
+                                            allocate(i_time(n_site), STAT = IERR)
+                                            allocate(z_frz_frn(n_time, n_frz_max, n_site), STAT = IERR)
+                                            allocate(n_frz_frn(n_time, n_site), STAT = IERR)
+                                            allocate(temp_frz(n_lay, n_site), STAT = IERR)
+                                            allocate(RES(n_time, m_grd + 3), STAT = IERR)
+
+                                            allocate(model%dz(n_grd), STAT = IERR)
+                                            allocate(model%temp(n_site, n_grd), STAT = IERR)
+                                            allocate(model%lay_id(n_site, n_grd), STAT = IERR)
+                                            allocate(model%temp_frz(n_lay, n_site), STAT = IERR)
+                                            allocate(model%RES(n_time, m_grd + 3), STAT = IERR)
+                                            allocate(model%n_frz_frn(n_time, n_site), STAT = IERR)
+                                            allocate(model%z_frz_frn(n_time, n_frz_max, n_site), STAT = IERR)
+
+                                            i_time = 1 ! active_layer uses it below, needs to be initialized here
+                                            z = zdepth / zdepth(n_grd)
+                                            do i_grd = 2, n_grd
+                                                dz(i_grd) = z(i_grd) - z(i_grd - 1)
+                                            enddo
+
+                                            hcscale = zdepth(n_grd) * zdepth(n_grd) / n_sec_day
+
+                                            hcap_frz = hcap_frz * hcscale
+                                            hcap_thw = hcap_thw * hcscale
+                                            hcap_s = hcap_snow * hcscale
+                                            L_fus = Lf * hcscale
+
+                                            call assign_layer_id(n_lay, n_lay_cur, n_site, n_grd, zdepth, n_bnd_lay, lay_id)
+                                            call init_cond(model, restart, n_site)
+
+                                            allocate(utemp_time_i(n_time + 2), STAT = IERR) ! allocating interval varialbe after interation
+                                            allocate(utemp_i(n_time + 2, n_site), STAT = IERR)
+                                            allocate(snd_i(n_time + 2, n_site), STAT = IERR)
+                                            allocate(stcon_i(n_time + 2, n_site), STAT = IERR)
+
+                                            do j_time = 1, n_time + 2
+                                                utemp_time_i(j_time) = time_restart + DBLE(j_time - 1) * time_step
+                                            enddo
+                                            do i_site = 1, n_site
+                                                if (lbound .EQ. 2) temp_grd(i_site) = temp_grd(i_site) * zdepth(n_grd)
+                                                do i_lay = 1, n_lay_cur(i_site)
+                                                    temp_frz(i_lay, i_site) = -(vwc(i_lay, i_site) / a_coef(i_lay, i_site))**(1.d0 / b_coef(i_lay, i_site))
+                                                enddo
+                                                call interpolate(utemp_time, utemp(:, i_site), n_temp, utemp_time_i, utemp_i(:, i_site), n_time + 2)
+                                                call interpolate(snd_time, snd(:, i_site), n_snow, utemp_time_i, snd_i(:, i_site), n_time + 2)
+                                                !            call snowfix(model, utemp_i(:, i_site), snd_i(:, i_site), n_time + 2)
+                                                call interpolate(stcon_time, stcon(:, i_site), n_stcon, utemp_time_i, stcon_i(:, i_site), n_time + 2)
+                                                call active_layer(model, i_site)
+                                            enddo
+
+                                            if (model%write_outputs_or_not .eq. 1) then
+
+                                                open(1, file = trim(adjustl(result_file)) // '.txt', STATUS = 'unknown')
+                                                open(2, file = trim(adjustl(aver_res_file)) // '.txt', STATUS = 'unknown')
+                                                open(3, file = trim(adjustl(restart_file)) // '.txt', STATUS = 'unknown')
+
+                                                write(FMT1, '(A33,I0,A11)') '(1x,I0.10,1x,F10.0,2(1x,F10.4),', m_grd, '(1x,F10.4))'
+                                                write(FMT2, '(A32,I0,A40)') '(1x,I0.10,1x,F10.0,2(1x,F8.3),', m_grd, '(1x,F8.3),(1x,F8.3,1x,F12.3),(1x,F12.3))'
+
+                                            endif
+
+                                            TINIR = 0.0D0
+
+                                            time_s = time_step * DBLE(n_time * time_beg)
+                                            time_e = time_step * DBLE(n_time * time_end)
+
+                                            ! pass value to model interface
+
+                                            model%n_temp = n_temp
+                                            model%utemp_time = utemp_time
+                                            model%utemp = utemp
+
+                                            model%n_stcon = n_stcon
+                                            model%stcon_time = stcon_time
+                                            model%stcon = stcon
+
+                                            model%n_snow = n_snow
+                                            model%snd_time = snd_time
+                                            model%snd = snd
+
+                                            model%n_ini = n_ini
+                                            model%zdepth_ini = zdepth_ini
+                                            model%ztemp_ini = ztemp_ini
+
+                                            model%zdepth = zdepth
+                                            model%zdepth_id = zdepth_id
+
+                                            model%dz = dz
+                                            model%temp = temp
+                                            model%lay_id = lay_id
+                                            model%temp_frz = temp_frz
+                                            model%RES = RES
+                                            model%n_lay_cur = n_lay_cur
+
+                                            model%n_lay = n_lay
+
+                                            model%vwc = vwc
+                                            model%a_coef = a_coef
+                                            model%b_coef = b_coef
+                                            model%EE = EE
+                                            model%hcap_frz = hcap_frz
+                                            model%hcap_thw = hcap_thw
+                                            model%tcon_frz = tcon_frz
+                                            model%tcon_thw = tcon_thw
+                                            model%n_lay_cur = n_lay_cur
+                                            model%n_bnd_lay = n_bnd_lay
+
+                                            model%top_run_time = 1 ! initial is 1.
+                                            model%dt = 1
+                                            model%n_x = 1
+                                            model%n_y = 1
+                                            model%n_z = n_grd
+                                            model%dx = 1
+                                            model%dy = 1
+                                            model%dz0 = 1
+
+                                            model%time_beg = n_time * time_beg
+                                            model%time_end = n_time * time_end
+
+                                            model%initialize_status = 1
+
+                                            model % tair_cur = utemp(model % top_run_time, 1)
+                                            model % snd_cur = snd(model % top_run_time, 1)
+                                            model % stcon_cur = stcon(model % top_run_time, 1)
+
+                                            !        model%write_outputs_or_not = 0 ! 1: write out to file, 0: not.
+                                        endif
+                                    endif
+                                endif
+                            endif
+                        endif
+                    endif
                 endif
-                n_bnd_lay(i, j + 1) = layer_thick
-                EE(J, I) = 0
-                !	     write(*,'(3(f8.3),2(f12.1),3(f8.3))') vwc(J,I),a_coef(J,I),b_coef(J,I), &
-                !		  hcap_thw(J,I),hcap_frz(J,I),tcon_thw(J,I),tcon_frz(J,I),n_bnd_lay(i,j+1)
-            enddo
-            k = 1
-            n_lay_cur(I) = num_vl(veg_code(i)) + num_gl(geo_code(i)) ! maximum number of soil layer = organic layers + mineral layers
-            do j = num_vl(veg_code(i)) + 1, n_lay_cur(I)
-                vwc(J, I) = B1(k, geo_code(i));
-                a_coef(J, I) = B2(k, geo_code(i));
-                b_coef(J, I) = B3(k, geo_code(i));
-                hcap_thw(J, I) = B4(k, geo_code(i));
-                hcap_frz(J, I) = B5(k, geo_code(i));
-                tcon_thw(J, I) = B6(k, geo_code(i));
-                tcon_frz(J, I) = B7(k, geo_code(i));
-                EE(J, I) = 0
-                layer_thick = layer_thick + B8(geo_code(i), k);
-                n_bnd_lay(i, j + 1) = layer_thick!B8(geo_code(i),j)
-                k = k + 1
-            enddo
-            n_bnd_lay(i, n_lay_cur(I) + 1) = zdepth(n_grd)
-        enddo
-
-        allocate(z(n_grd), STAT = IERR)
-        allocate(dz(n_grd), STAT = IERR)
-        allocate(temp(n_site, n_grd), STAT = IERR)
-        allocate(lay_id(n_site, n_grd), STAT = IERR)
-        allocate(i_time(n_site), STAT = IERR)
-        allocate(z_frz_frn(n_time, n_frz_max, n_site), STAT = IERR)
-        allocate(n_frz_frn(n_time, n_site), STAT = IERR)
-        allocate(temp_frz(n_lay, n_site), STAT = IERR)
-        allocate(RES(n_time, m_grd + 3), STAT = IERR)
-
-        allocate(model%dz(n_grd), STAT = IERR)
-        allocate(model%temp(n_site, n_grd), STAT = IERR)
-        allocate(model%lay_id(n_site, n_grd), STAT = IERR)
-        allocate(model%temp_frz(n_lay, n_site), STAT = IERR)
-        allocate(model%RES(n_time, m_grd + 3), STAT = IERR)
-        allocate(model%n_frz_frn(n_time, n_site), STAT = IERR)
-        allocate(model%z_frz_frn(n_time, n_frz_max, n_site), STAT = IERR)
-
-        i_time = 1 ! active_layer uses it below, needs to be initialized here
-        z = zdepth / zdepth(n_grd)
-        do i_grd = 2, n_grd
-            dz(i_grd) = z(i_grd) - z(i_grd - 1)
-        enddo
-
-        hcscale = zdepth(n_grd) * zdepth(n_grd) / n_sec_day
-
-        hcap_frz = hcap_frz * hcscale
-        hcap_thw = hcap_thw * hcscale
-        hcap_s = hcap_snow * hcscale
-        L_fus = Lf * hcscale
-
-        call assign_layer_id(n_lay, n_lay_cur, n_site, n_grd, zdepth, n_bnd_lay, lay_id)
-        call init_cond(model, restart, n_site)
-
-        allocate(utemp_time_i(n_time + 2), STAT = IERR) ! allocating interval varialbe after interation
-        allocate(utemp_i(n_time + 2, n_site), STAT = IERR)
-        allocate(snd_i(n_time + 2, n_site), STAT = IERR)
-        allocate(stcon_i(n_time + 2, n_site), STAT = IERR)
-
-        do j_time = 1, n_time + 2
-            utemp_time_i(j_time) = time_restart + DBLE(j_time - 1) * time_step
-        enddo
-        do i_site = 1, n_site
-            if (lbound .EQ. 2) temp_grd(i_site) = temp_grd(i_site) * zdepth(n_grd)
-            do i_lay = 1, n_lay_cur(i_site)
-                temp_frz(i_lay, i_site) = -(vwc(i_lay, i_site) / a_coef(i_lay, i_site))**(1.d0 / b_coef(i_lay, i_site))
-            enddo
-            call interpolate(utemp_time, utemp(:, i_site), n_temp, utemp_time_i, utemp_i(:, i_site), n_time + 2)
-            call interpolate(snd_time, snd(:, i_site), n_snow, utemp_time_i, snd_i(:, i_site), n_time + 2)
-            !            call snowfix(model, utemp_i(:, i_site), snd_i(:, i_site), n_time + 2)
-            call interpolate(stcon_time, stcon(:, i_site), n_stcon, utemp_time_i, stcon_i(:, i_site), n_time + 2)
-            call active_layer(model, i_site)
-        enddo
-
-        if (model%write_outputs_or_not .eq. 1) then
-
-            open(1, file = trim(adjustl(result_file)) // '.txt', STATUS = 'unknown')
-            open(2, file = trim(adjustl(aver_res_file)) // '.txt', STATUS = 'unknown')
-            open(3, file = trim(adjustl(restart_file)) // '.txt', STATUS = 'unknown')
-
-            write(FMT1, '(A33,I0,A11)') '(1x,I0.10,1x,F10.0,2(1x,F10.4),', m_grd, '(1x,F10.4))'
-            write(FMT2, '(A32,I0,A40)') '(1x,I0.10,1x,F10.0,2(1x,F8.3),', m_grd, '(1x,F8.3),(1x,F8.3,1x,F12.3),(1x,F12.3))'
-
-        endif
-
-        TINIR = 0.0D0
-
-        time_s = time_step * DBLE(n_time * time_beg)
-        time_e = time_step * DBLE(n_time * time_end)
-
-        ! pass value to model interface
-
-        model%n_temp = n_temp
-        model%utemp_time = utemp_time
-        model%utemp = utemp
-
-        model%n_stcon = n_stcon
-        model%stcon_time = stcon_time
-        model%stcon = stcon
-
-        model%n_snow = n_snow
-        model%snd_time = snd_time
-        model%snd = snd
-
-        model%n_ini = n_ini
-        model%zdepth_ini = zdepth_ini
-        model%ztemp_ini = ztemp_ini
-
-        model%zdepth = zdepth
-        model%zdepth_id = zdepth_id
-
-        model%dz = dz
-        model%temp = temp
-        model%lay_id = lay_id
-        model%temp_frz = temp_frz
-        model%RES = RES
-        model%n_lay_cur = n_lay_cur
-
-        model%n_lay = n_lay
-
-        model%vwc = vwc
-        model%a_coef = a_coef
-        model%b_coef = b_coef
-        model%EE = EE
-        model%hcap_frz = hcap_frz
-        model%hcap_thw = hcap_thw
-        model%tcon_frz = tcon_frz
-        model%tcon_thw = tcon_thw
-        model%n_lay_cur = n_lay_cur
-        model%n_bnd_lay = n_bnd_lay
-
-        model%top_run_time = 1 ! initial is 1.
-        model%dt           = 1
-        model%n_x          = 1
-        model%n_y          = 1
-        model%n_z          = n_grd
-        model%dx           = 1
-        model%dy           = 1
-        model%dz0          = 1
-        
-        model%time_beg     = n_time * time_beg
-        model%time_end     = n_time * time_end
-        
-        model%initialize_status = 1
-        
-        model % tair_cur  = utemp(model % top_run_time,1)
-        model % snd_cur   = snd(model % top_run_time,1)
-        model % stcon_cur = stcon(model % top_run_time,1)
-
-        !        model%write_outputs_or_not = 0 ! 1: write out to file, 0: not.
-        endif
-        endif
-        endif
-        endif
-        endif
-        endif
-        endif
-        endif
+            endif
         endif
 
     end subroutine initialize
@@ -1031,21 +1030,21 @@ contains
         enddo
 
     end subroutine save_results
-    
-    subroutine print_info(model)
-      
-      type (gipl_model_type), intent (in) :: model
 
-      write(*,"(a10, i8)") "n_x:", model%n_x
-      write(*,"(a10, i8)") "n_y:", model%n_y
-      
-      write(*,"(a10, f8.2)") "dx:", model%dx
-      write(*,"(a10, f8.2)") "dy:", model%dy
-      
-      write(*,"(a10, f8.2)") "dt:", model%time_step
-      
-      write(*,"(a10, f8.2)") "t_end:", model%time_end
-      
+    subroutine print_info(model)
+
+        type (gipl_model_type), intent (in) :: model
+
+        write(*, "(a10, i8)") "n_x:", model%n_x
+        write(*, "(a10, i8)") "n_y:", model%n_y
+
+        write(*, "(a10, f8.2)") "dx:", model%dx
+        write(*, "(a10, f8.2)") "dy:", model%dy
+
+        write(*, "(a10, f8.2)") "dt:", model%time_step
+
+        write(*, "(a10, f8.2)") "t_end:", model%time_end
+
     end subroutine print_info
 
 end module gipl_model
@@ -1441,7 +1440,7 @@ subroutine filexist(filename, status)
     if (.not.chf) then
         write(*, '(/'' FILE '',a, '' DOESNT EXIST'')') trim(filename)
         status = 0
-!         stop
+        !         stop
     endif
 end subroutine filexist
 !-----------------------------------------------
