@@ -240,10 +240,10 @@ contains
         real :: time_step
 
         if (time_frac > 0.0) then
-            time_step = self%model%dt
-            self%model%dt = time_step * real(time_frac)
+            time_step = self%model%time_step
+            self%model%time_step = time_step * real(time_frac)
             call update(self%model)
-            self%model%dt = time_step
+            self%model%time_step = time_step
         end if
         bmi_status = BMI_SUCCESS
     end function snow_update_frac
@@ -566,6 +566,8 @@ contains
         case("snow__thermal_conductivity")
             var_units = "W m-1 K-1"
             bmi_status = BMI_SUCCESS
+        case("soil__temperature")
+            var_units = 'C'
         case default
             var_units = "-"
             bmi_status = BMI_FAILURE
