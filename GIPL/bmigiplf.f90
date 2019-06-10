@@ -83,7 +83,7 @@ module bmigiplf
             component_name = "The 1D GIPL Model"
 
     ! Exchange items
-    integer, parameter :: input_item_count = 10
+    integer, parameter :: input_item_count = 4
     integer, parameter :: output_item_count = 2
     character (len = BMI_MAX_VAR_NAME), target, &
             dimension(input_item_count) :: input_items
@@ -207,8 +207,19 @@ contains
         class (bmi_gipl), intent(in) :: self
         character (len = *), intent(out) :: time_units
         integer :: bmi_status
-
+        
         time_units = "second"
+        
+        if (self%model%time_step == 86400) then
+        time_units = "day"
+        endif
+        if(self%model%time_step == 2628000) then
+        time_units = "month"
+        endif
+        if(self%model%time_step == 3600) then
+        time_units = "hour"
+        endif
+        
         bmi_status = BMI_SUCCESS
     end function snow_time_units
 
