@@ -1,6 +1,6 @@
 program test_initialize
 
-  use bmif_1_2, only: BMI_SUCCESS
+  use bmif_1_2, only: BMI_FAILURE
   use bmigiplf
   use fixtures, only: status
 
@@ -14,8 +14,9 @@ program test_initialize
 
   status1 = m%initialize(config_file1)
   status = m%finalize()
-    if (status1.ne.BMI_SUCCESS) then
-     stop
+    
+  if (status1 .ne. 0) then
+     stop BMI_FAILURE
   end if
 
 end program test_initialize
