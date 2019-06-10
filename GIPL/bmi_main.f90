@@ -54,6 +54,8 @@ program bmi_main
     ENDIF
 
     s = model%initialize(fconfig)
+    
+    print*,s
 
     write(*, "(a)") "Initialized"
 
