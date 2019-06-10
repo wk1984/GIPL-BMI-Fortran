@@ -126,6 +126,14 @@ program bmi_main
 
         do i = 1, int(end_time)
 
+            if (i .eq. 85) then
+
+                ! change VWC in first soil layer in 'geo.txt' file.
+
+                s = model%set_value_at_indices(var_name4, [1], [0.1])
+
+            end if
+
             if (i .eq. 95) then ! change air temperature at the 5th time step.
 
                 !            s = model%set_value('land_surface_air__temperature', [-5.0])
@@ -134,13 +142,13 @@ program bmi_main
 
             if (i .eq. 100) then ! change snow depth at the 100th time step.
 
-                !            s = model%set_value('snowpack__depth', [0.1])
+!                            s = model%set_value('snowpack__depth', [0.1])
 
             end if
 
             if (i .eq. 110) then ! change snow thermal conductivity at the 110th time step.
 
-                !             s = model%set_value('snow__thermal_conductivity', [0.01])
+!                             s = model%set_value('snow__thermal_conductivity', [0.01])
 
             end if
 
