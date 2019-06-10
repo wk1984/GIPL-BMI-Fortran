@@ -40,6 +40,7 @@ program bmi_main
 
     real, allocatable :: soil_temperature(:)
     real, allocatable :: depth(:)
+    double precision, allocatable :: dz(:)
 
     type (bmi_gipl) :: model
 
@@ -74,6 +75,7 @@ program bmi_main
         print*, 'Total soil nodes:', soil_nodes_number
 
         allocate(soil_temperature(soil_nodes_number))
+        allocate(dz(soil_nodes_number))
 
         ! Get air temperature
         s = model%get_var_grid(var_name1, grid_id1)
@@ -95,8 +97,6 @@ program bmi_main
         s = model%get_grid_size(grid_id4, grid_size4)
         s = model%get_var_units(var_name4, var_unit4)
 
-        print*, grid_id4
-
         ! Get soil temperatures
         s = model%get_var_grid(out_name1, out_grid_id1)
         s = model%get_grid_rank(out_grid_id1, out_grid_rank1)
@@ -110,6 +110,8 @@ program bmi_main
 
         write(*, '("Initial Time  = ",f0.1)') current_time
         write(*, '("Final Time    = ",f0.1)') end_time
+
+        s = model%get_grid_z(out_grid_id1, dz) ! get depths
 
         allocate(temperature(grid_size1))
         allocate(snow_depth(grid_size2))
