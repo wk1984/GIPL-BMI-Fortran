@@ -1027,6 +1027,22 @@ contains
         enddo
 
     end subroutine save_results
+    
+    subroutine print_info(model)
+      
+      type (gipl_model_type), intent (in) :: model
+
+      write(*,"(a10, i8)") "n_x:", model%n_x
+      write(*,"(a10, i8)") "n_y:", model%n_y
+      
+      write(*,"(a10, f8.2)") "dx:", model%dx
+      write(*,"(a10, f8.2)") "dy:", model%dy
+      
+      write(*,"(a10, f8.2)") "dt:", model%time_step
+      
+      write(*,"(a10, f8.2)") "t_end:", model%time_end
+      
+    end subroutine print_info
 
 end module gipl_model
 !________________________________________________
@@ -1425,3 +1441,4 @@ subroutine filexist(filename, status)
     endif
 end subroutine filexist
 !-----------------------------------------------
+
