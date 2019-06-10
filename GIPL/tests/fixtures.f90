@@ -2,7 +2,7 @@ module fixtures
 
   implicit none
 
-  character (len=*), parameter :: config_file = ""
+  character (len=*), parameter :: config_file = "test.cfg"
 
   integer :: status
 
