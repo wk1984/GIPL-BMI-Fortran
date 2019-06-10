@@ -323,6 +323,17 @@ contains
 
         real*8 :: hcscale
 
+        if ((model%write_outputs_or_not .eq. 1) .and. (model%top_run_time .eq. 1)) then
+
+            open(1, file = trim(adjustl(result_file)) // '.txt', STATUS = 'unknown')
+            open(2, file = trim(adjustl(aver_res_file)) // '.txt', STATUS = 'unknown')
+            open(3, file = trim(adjustl(restart_file)) // '.txt', STATUS = 'unknown')
+
+            write(FMT1, '(A33,I0,A11)') '(1x,I0.10,1x,F10.0,2(1x,F10.4),', m_grd, '(1x,F10.4))'
+            write(FMT2, '(A32,I0,A40)') '(1x,I0.10,1x,F10.0,2(1x,F8.3),', m_grd, '(1x,F8.3),(1x,F8.3,1x,F12.3),(1x,F12.3))'
+
+        endif
+
         !=========
         ! The follow lines are alternative solution to pass changes to the model.
         ! but interpolate function seems like to bring different results
@@ -829,17 +840,6 @@ contains
                                                 call interpolate(stcon_time, stcon(:, i_site), n_stcon, utemp_time_i, stcon_i(:, i_site), n_time + 2)
                                                 call active_layer(model, i_site)
                                             enddo
-
-                                            if (model%write_outputs_or_not .eq. 1) then
-
-                                                open(1, file = trim(adjustl(result_file)) // '.txt', STATUS = 'unknown')
-                                                open(2, file = trim(adjustl(aver_res_file)) // '.txt', STATUS = 'unknown')
-                                                open(3, file = trim(adjustl(restart_file)) // '.txt', STATUS = 'unknown')
-
-                                                write(FMT1, '(A33,I0,A11)') '(1x,I0.10,1x,F10.0,2(1x,F10.4),', m_grd, '(1x,F10.4))'
-                                                write(FMT2, '(A32,I0,A40)') '(1x,I0.10,1x,F10.0,2(1x,F8.3),', m_grd, '(1x,F8.3),(1x,F8.3,1x,F12.3),(1x,F12.3))'
-
-                                            endif
 
                                             TINIR = 0.0D0
 
