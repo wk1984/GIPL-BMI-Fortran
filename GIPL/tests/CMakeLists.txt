@@ -8,3 +8,5 @@ function(make_test test_name)
   add_executable(${test_name} ${src_${test_name}})
   target_link_libraries(${test_name} ${bmi_lib} ${bmigipl_lib})
 endfunction(make_test)
+
+make_test(test_get_component_name)
