@@ -139,12 +139,13 @@ program bmi_main
             s = model%set_value('snow__thermal_conductivity', [0.01])
 
         end if
-
-        s = model%update()
-
+        
         s = model%get_value(var_name1, temperature)
         s = model%get_value(var_name2, snow_depth)
         s = model%get_value(var_name3, snow_conductivity)
+        
+        s = model%update()       
+        
         s = model%get_value(out_name1, soil_temperature)
 
         read(1991,*) x, x, obs5, obs6, obs1, obs2, obs3, obs4
