@@ -6,11 +6,11 @@ program test_get_time_step
 
   implicit none
 
-  double precision, parameter :: expected_time_step = 1.d0
+  real*8, parameter :: expected_time_step = 1.d0
 
   type (bmi_gipl) :: m
-  double precision :: time_step
-
+  real*8 :: time_step
+  
   status = m%initialize(config_file)
   status = m%get_time_step(time_step)
   status = m%finalize()
