@@ -276,19 +276,19 @@ contains
 
         select case(var_name)
         case('land_surface_air__temperature')
-            grid_id = 1
+            grid_id = 0
             bmi_status = BMI_SUCCESS
         case('snow__thermal_conductivity')
-            grid_id = 1
+            grid_id = 0
             bmi_status = BMI_SUCCESS
         case('snowpack__depth')
-            grid_id = 1
+            grid_id = 0
             bmi_status = BMI_SUCCESS
         case('model_soil_layer__count')
-            grid_id = 1
+            grid_id = 0
             bmi_status = BMI_SUCCESS
         case('soil_water__volume_fraction')
-            grid_id = 0
+            grid_id = 2
             bmi_status = BMI_SUCCESS
         case('soil__temperature')
             grid_id = 2
@@ -308,7 +308,7 @@ contains
 
         select case(grid_id)
         case(0)
-            grid_type = "uniform_rectilinear"
+            grid_type = "rectilinear"
             bmi_status = BMI_SUCCESS
         case(1)
             grid_type = "scalar"
@@ -355,6 +355,9 @@ contains
         case(0)
             grid_shape = [self%model%n_y, self%model%n_x]
             bmi_status = BMI_SUCCESS
+        case(1)
+            grid_shape = [1]
+            bmi_status = BMI_SUCCESS
         case(2)
             grid_shape = [self%model%n_y, self%model%n_x, self%model%n_z]
             bmi_status = BMI_SUCCESS
@@ -398,6 +401,9 @@ contains
         case(0)
             grid_spacing = [self%model%dy, self%model%dx]
             bmi_status = BMI_SUCCESS
+        case(1)
+            grid_spacing = [self%model%dx]
+            bmi_status = BMI_SUCCESS
         case(2)
             grid_spacing = [self%model%dy, self%model%dx, self%model%dz0]
             bmi_status = BMI_SUCCESS
@@ -418,6 +424,12 @@ contains
         case(0)
             grid_origin = [0.d0, 0.d0]
             bmi_status = BMI_SUCCESS
+        case(1)
+            grid_origin = [0.d0]
+            bmi_status = BMI_SUCCESS
+        case(2)
+            grid_origin = [0.d0, 0.d0, 0.d0]
+            bmi_status = BMI_SUCCESS
         case default
             grid_origin = [-1.d0]
             bmi_status = BMI_FAILURE
@@ -432,6 +444,9 @@ contains
         integer :: bmi_status
 
         select case(grid_id)
+        case(0)
+            grid_x = [0.d0]
+            bmi_status = BMI_SUCCESS
         case(1)
             grid_x = [0.d0]
             bmi_status = BMI_SUCCESS
@@ -452,6 +467,9 @@ contains
         integer :: bmi_status
 
         select case(grid_id)
+        case(0)
+            grid_y = [0.d0]
+            bmi_status = BMI_SUCCESS
         case(1)
             grid_y = [0.d0]
             bmi_status = BMI_SUCCESS
@@ -472,6 +490,9 @@ contains
         integer :: bmi_status
 
         select case(grid_id)
+        case(0)
+            grid_z = [0.d0]
+            bmi_status = BMI_SUCCESS
         case(1)
             grid_z = [0.d0]
             bmi_status = BMI_SUCCESS
@@ -493,8 +514,14 @@ contains
         integer :: bmi_status
 
         select case(grid_id)
+        case(0)
+            grid_conn = [0, 0]
+            bmi_status = BMI_SUCCESS
         case(1)
             grid_conn = [0]
+            bmi_status = BMI_SUCCESS
+        case(2)
+            grid_conn = [0, 0, 0]
             bmi_status = BMI_SUCCESS
         case default
             grid_conn = [-1]
@@ -511,8 +538,14 @@ contains
         integer :: bmi_status
 
         select case(grid_id)
+        case(0)
+            grid_offset = [0, 0]
+            bmi_status = BMI_SUCCESS
         case(1)
             grid_offset = [0]
+            bmi_status = BMI_SUCCESS
+        case(2)
+            grid_offset = [0, 0, 0]
             bmi_status = BMI_SUCCESS
         case default
             grid_offset = [-1]
@@ -539,6 +572,9 @@ contains
             bmi_status = BMI_SUCCESS
         case("model_soil_layer__count")
             var_type = "integer"
+            bmi_status = BMI_SUCCESS
+        case("soil__temperature")
+            var_type = "real"
             bmi_status = BMI_SUCCESS
         case("write_or_not")
             var_type = "integer"
@@ -588,10 +624,13 @@ contains
         case("snowpack__depth")
             var_size = 1        ! 'sizeof' in gcc & ifort
             bmi_status = BMI_SUCCESS
+        case("snow__thermal_conductivity")
+            var_size = 1        ! 'sizeof' in gcc & ifort
+            bmi_status = BMI_SUCCESS
         case("model_soil_layer__count")
-            var_size = (self%model%n_z)
-        case("write_or_not")
             var_size = 1
+        case("soil__temperature")
+            var_size = (self%model%n_z)
         case default
             var_size = -1
             bmi_status = BMI_FAILURE
@@ -629,6 +668,9 @@ contains
         case("write_or_not")
             dest = [self%model%write_outputs_or_not]
             bmi_status = BMI_SUCCESS
+        case("model_soil_layer__count")
+            dest = [self%model%n_z]
+            bmi_status = BMI_SUCCESS        
         case default
             dest = [-1]
             bmi_status = BMI_FAILURE
@@ -653,7 +695,7 @@ contains
             dest = [self%model%stcon(self%model % top_run_time, 1)]
             bmi_status = BMI_SUCCESS
         case("soil__temperature")
-            dest = [self%model%temp]
+            dest = [self%model%temp ]
             bmi_status = BMI_SUCCESS
         case('soil_water__volume_fraction')
             dest = [self%model%vwc]
@@ -880,7 +922,7 @@ contains
     subroutine print_model_info(self)
         class (bmi_gipl), intent(in) :: self
 
-        !     call print_info(self%model)
+        call print_info(self%model)
 
     end subroutine print_model_info
 
