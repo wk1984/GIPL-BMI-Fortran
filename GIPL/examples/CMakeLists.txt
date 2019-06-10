@@ -13,6 +13,8 @@ make_example(info_ex)
 make_example(irf_ex)
 make_example(get_value_ex)
 make_example(set_value_ex)
+make_example(conflicting_instances_ex)
+make_example(change_air_temperature_ex)
 
 file(
   COPY ${CMAKE_CURRENT_SOURCE_DIR}/test.cfg
@@ -53,3 +55,7 @@ file(
 file(
   COPY ${data_dir}/output/result.txt.txt
   DESTINATION ${CMAKE_BINARY_DIR}/gipl/examples/output/)
+  
+file(
+  COPY ${CMAKE_CURRENT_SOURCE_DIR}/test2.cfg
+  DESTINATION ${CMAKE_BINARY_DIR}/gipl/examples)
