@@ -329,6 +329,10 @@ contains
         ! To be checked. (Kang, 2019-6-6)
         ! Seems function 'SNOWFIX' is that problem. Remove this, the example outputs
         ! are same. To be confirmed. (Kang, 2019-6-7)
+        
+        if (abs(time_step - model%time_step) .ne. 0) then
+        time_step = model%time_step
+        endif
 
         if ((maxval(abs(utemp - model%utemp)) .ne. 0) .or. &
                 (maxval(abs(snd - model%snd)) .ne. 0) .or. &
@@ -441,7 +445,7 @@ contains
         model % snd_cur   = snd(model % top_run_time,1)
         model % stcon_cur = stcon(model % top_run_time,1)
 
-        model % top_run_time = model % top_run_time + 1
+        model % top_run_time = model % top_run_time + 1 * time_step
 
         model % RES = RES
         
