@@ -895,6 +895,16 @@ contains
         real, pointer :: dest_flattened(:)
         integer :: i
 
+        select case(var_name)
+        case("soil_water__volume_fraction")
+            if (maxval(indices) .le. self%model%n_lay) then
+                self%model%vwc(indices, 1) = src(:)
+            else
+                bmi_status = BMI_FAILURE
+            end if
+        case default
+            bmi_status = BMI_FAILURE
+        end select
         return
     end function gipl_set_at_indices_float
 
