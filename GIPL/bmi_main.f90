@@ -68,7 +68,7 @@ program bmi_main
     s = model%get_end_time(end_time)
 
     ! Get soil depth variables:
-    s = model%get_var_itemsize(out_name2, soil_nodes_number)
+    s = model%get_var_itemsize(out_name1, soil_nodes_number)
     print*, 'Total soil nodes:', soil_nodes_number
 
     allocate(soil_temperature(soil_nodes_number))
@@ -136,7 +136,7 @@ program bmi_main
 
         if (i .eq. 110) then ! change snow thermal conductivity at the 110th time step.
 
-            s = model%set_value('snow__thermal_conductivity', [0.01])
+!             s = model%set_value('snow__thermal_conductivity', [0.01])
 
         end if
         
