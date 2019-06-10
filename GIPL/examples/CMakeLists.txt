@@ -11,6 +11,8 @@ endfunction(make_example)
 
 make_example(info_ex)
 make_example(irf_ex)
+make_example(get_value_ex)
+make_example(set_value_ex)
 
 file(
   COPY ${CMAKE_CURRENT_SOURCE_DIR}/test.cfg
