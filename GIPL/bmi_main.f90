@@ -55,8 +55,12 @@ program bmi_main
 
     s = model%initialize(fconfig)
     
-    print*,s
-
+    if (s .eq. 1) then
+    
+    write(*, "(a)") "Error"
+    
+    else
+    
     write(*, "(a)") "Initialized"
 
     ! Get time variables:
@@ -160,6 +164,8 @@ program bmi_main
     s = model%finalize()
 
     close(1991)
+    
+    endif
 
 
 end program bmi_main

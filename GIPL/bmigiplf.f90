@@ -141,7 +141,6 @@ contains
         if (len(config_file) > 0) then
             call initialize(self%model, config_file)
             
-            print*, self%model%initialize_status
             if (self%model%initialize_status .eq. 1) then
             bmi_status = BMI_SUCCESS
             else
