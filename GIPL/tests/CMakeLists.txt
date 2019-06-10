@@ -18,6 +18,7 @@ make_test(test_get_time_step)
 make_test(test_get_input_var_names)
 make_test(test_get_output_var_names)
 make_test(test_get_time_units)
+make_test(test_get_value)
 
 file(
   COPY ${CMAKE_CURRENT_SOURCE_DIR}/test.cfg
