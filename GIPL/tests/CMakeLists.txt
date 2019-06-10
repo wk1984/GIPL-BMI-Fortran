@@ -10,3 +10,6 @@ function(make_test test_name)
 endfunction(make_test)
 
 make_test(test_get_component_name)
+make_test(test_initialize)
+make_test(test_get_current_time)
+make_test(test_get_end_time)
