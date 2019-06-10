@@ -372,6 +372,8 @@ contains
             hcap_thw = model%hcap_thw
             tcon_frz = model%tcon_frz
             tcon_thw = model%tcon_thw
+            
+            ! recalculate phase change temperature by using vwc, and unfrozen water a & b
 
             do i_site = 1, n_site
                 do i_lay = 1, n_lay_cur(i_site)
@@ -380,6 +382,8 @@ contains
             end do
 
             hcscale = zdepth(n_grd) * zdepth(n_grd) / n_sec_day
+            
+            ! updating scales ... ...
 
             hcap_frz = hcap_frz * hcscale
             hcap_thw = hcap_thw * hcscale
@@ -1376,7 +1380,7 @@ subroutine stefan1D(temps, n_grd, dz, time_loop, isite, lay_idx, flux)
     AMU2 = (temps(n_grd) * RAB2 / timei + 2.D0 * Q2 / dz(n_grd)) / (RAB2 / timei + 2.D0 * RAB1 &
             / dz(n_grd)**2.D0)
     if (DABS(AKAPA2) > 1.D0) then
-        print*, 'Tridiagonal method is failed - chang you time step tau'
+        print*, 'Tridiagonal method is failed - change your tau in the configuration file'
         print*, rab1, rab2, akapa2
         STOP
     endif
