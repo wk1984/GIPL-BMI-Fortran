@@ -112,6 +112,8 @@ module gipl_model
         real*8 :: dx,  dy,  dz0
         
         real*8 :: tair_cur, snd_cur, stcon_cur
+        
+        integer :: initialize_status !1: pass, 0: failure.
 
         ! copy from const
 
@@ -457,7 +459,7 @@ contains
 
         type(gipl_model_type) :: model
 
-        integer IREAD, ierr
+        integer IREAD, ierr, status
         integer :: i, j, k, z_num, i_grd, j_time, i_site, i_lay
 
         real*8, allocatable :: gtzone(:, :)
@@ -480,7 +482,8 @@ contains
         real*8, allocatable :: z(:) ! vertical grid
         real*8 :: hcscale
 
-        call filexist(fconfig)
+        call filexist(fconfig, status)
+        if (status .eq. 1) then
         open(60, file = fconfig)
         !read input files
         read(60, '(A)') stdummy
@@ -529,14 +532,24 @@ contains
         model%time_step = time_step
         model%n_time = n_time
 
-        call filexist(file_sites)
-        call filexist(file_bound)
-        call filexist(file_snow)
-        call filexist(file_rsnow)
-        call filexist(file_grid)
-        call filexist(file_init)
-        call filexist(file_mineral)
-        call filexist(file_organic)
+        call filexist(file_sites, status)
+        if (status .eq. 1) then
+        call filexist(file_bound, status)
+        if (status .eq. 1) then
+        call filexist(file_snow, status)
+        if (status .eq. 1) then
+        call filexist(file_rsnow, status)
+        if (status .eq. 1) then
+        call filexist(file_grid, status)
+        if (status .eq. 1) then
+        call filexist(file_init, status)
+        if (status .eq. 1) then
+        call filexist(file_mineral, status)
+        if (status .eq. 1) then
+        call filexist(file_organic, status)
+        if (status .eq. 1) then
+        
+        print*, status
 
         open(60, FILE = file_sites)
         read(60, *) n_site
@@ -877,8 +890,19 @@ contains
         model%dx           = 1
         model%dy           = 1
         model%dz0          = 1
+        
+        model%initialize_status = 1
 
         !        model%write_outputs_or_not = 0 ! 1: write out to file, 0: not.
+        endif
+        endif
+        endif
+        endif
+        endif
+        endif
+        endif
+        endif
+        endif
 
     end subroutine initialize
 
@@ -1379,13 +1403,16 @@ subroutine stefan1D(temps, n_grd, dz, time_loop, isite, lay_idx, flux)
 
 end subroutine stefan1D
 
-subroutine filexist(filename)
+subroutine filexist(filename, status)
     character*164 filename
     logical chf
+    integer status
     inquire(file = filename, exist = chf)
+    status = 1
     if (.not.chf) then
         write(*, '(/'' FILE '',a, '' DOESNT EXIST'')') trim(filename)
-        stop
+        status = 0
+!         stop
     endif
 end subroutine filexist
 !-----------------------------------------------
