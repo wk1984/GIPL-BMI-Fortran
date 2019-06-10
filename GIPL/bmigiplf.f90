@@ -168,7 +168,7 @@ contains
         double precision, intent(out) :: time
         integer :: bmi_status
 
-        time = 0.d0
+        time = dble(self%model%time_beg)
         bmi_status = BMI_SUCCESS
     end function snow_start_time
 
@@ -178,7 +178,7 @@ contains
         double precision, intent(out) :: time
         integer :: bmi_status
 
-        time = dble(self%model%n_time)
+        time = dble(self%model%time_end)
         bmi_status = BMI_SUCCESS
     end function snow_end_time
 
@@ -198,7 +198,7 @@ contains
         double precision, intent(out) :: time_step
         integer :: bmi_status
 
-        time_step = dble(self%model%dt)
+        time_step = dble(self%model%time_step)
         bmi_status = BMI_SUCCESS
     end function snow_time_step
 
@@ -210,13 +210,13 @@ contains
         
         time_units = "second"
         
-        if (self%model%time_step == 86400) then
+        if (self%model%n_sec_day .eq. dble(86400.)) then
         time_units = "day"
         endif
-        if(self%model%time_step == 2628000) then
+        if(self%model%n_sec_day .eq. dble(2628000.)) then
         time_units = "month"
         endif
-        if(self%model%time_step == 3600) then
+        if(self%model%n_sec_day .eq. dble(3600.)) then
         time_units = "hour"
         endif
         
@@ -642,13 +642,13 @@ contains
 
         select case(var_name)
         case("land_surface_air__temperature")
-            dest = [self%model%tair_cur]
+            dest = [self%model%utemp(self%model % top_run_time, 1)]
             bmi_status = BMI_SUCCESS
         case("snowpack__depth")
-            dest = [self%model%snd_cur]
+            dest = [self%model%snd(self%model % top_run_time, 1)]
             bmi_status = BMI_SUCCESS
         case("snow__thermal_conductivity")
-            dest = [self%model%stcon_cur]
+            dest = [self%model%stcon(self%model % top_run_time, 1)]
             bmi_status = BMI_SUCCESS
         case("soil__temperature")
             dest = [self%model%temp]
