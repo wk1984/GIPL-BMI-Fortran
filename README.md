@@ -24,7 +24,7 @@
 > `ctest`
 > 
 
-### 2. Current input variables [will be added in future]
+### 2. Current input variables [to be added]
 
 | Standard Name                             | Description                                                                                                                       | Unit     | Type    |
 |-------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|----------|---------|
@@ -35,7 +35,7 @@
 | soil\_unfrozen\_water\_\_a                  | Soil Unfrozen Water Parameter 'a'                | -    | Real |
 | soil\_unfrozen\_water\_\_b                  | Soil Unfrozen Water Parameter 'b'                | -    | Real |
 
-### 3. Current output variables [will be added in future]
+### 3. Current output variables [to be added]
 
 | Standard Name                             | Description                                                                                                                       | Unit     | Type    |
 |-------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|----------|---------|
