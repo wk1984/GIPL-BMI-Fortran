@@ -6,7 +6,7 @@ program test_get_input_var_names
 
   implicit none
 
-  integer, parameter :: n_inputs = 4
+  integer, parameter :: n_inputs = 6
   type (bmi_gipl) :: m
   character (len=BMI_MAX_VAR_NAME), allocatable :: expected(:)
   character (len=BMI_MAX_VAR_NAME) :: e1, e2, e3, e4, e5, e6, e7
@@ -18,8 +18,10 @@ program test_get_input_var_names
   e2 = "snowpack__depth"
   e3 = "snow__thermal_conductivity"
   e4 = "soil_water__volume_fraction"
+  e5 = "soil_unfrozen_water__a"
+  e6 = "soil_unfrozen_water__b"
   
-  expected = [e1,e2,e3,e4]
+  expected = [e1,e2,e3,e4,e5,e6]
   
   status = m%get_input_var_names(names)
   
