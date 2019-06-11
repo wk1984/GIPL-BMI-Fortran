@@ -134,7 +134,7 @@ program bmi_main
 
         write(*, *) 'Compare with benchmark ... '
 
-        write(*, '(A5, 1x, A8, 1X, A8, 1X,A8, 1X,A8, 1X,A8, 1X,A8)'), 'T', 'Tair', 'Snow', '0.001m', 'Tg 0.08m', 'Tg 0.12m', &
+        write(*, '(A5, 1x, A8, 1X, A8, 1X,A8, 1X,A8, 1X,A8, 1X,A8)') 'T', 'Tair', 'Snow', '0.001m', 'Tg 0.08m', 'Tg 0.12m', &
                 'Tg 0.20m'
 
         do i = 1, int(end_time)
@@ -159,13 +159,13 @@ program bmi_main
 
                 ! change UWC_b in first soil layer in 'geo.txt' file.
 
-!                s = model%set_value_at_indices(var_name6, [1], [-0.5])
+               s = model%set_value_at_indices(var_name6, [1], [-0.5])
 
             end if
 
             if (i .eq. 95) then ! change air temperature at the 5th time step.
 
-                !            s = model%set_value('land_surface_air__temperature', [-5.0])
+!                 s = model%set_value('land_surface_air__temperature', [-10.0])
 
             end if
 
@@ -193,7 +193,7 @@ program bmi_main
 
             if ((i .le. 130) .and. (i .ge. 91)) then
 
-                write(*, '(I5, 1x, F8.3, 1X, F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3)'), &
+                write(*, '(I5, 1x, F8.3, 1X, F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3)') &
                         i, temperature - obs5, snow_depth - obs6, &
                         soil_temperature(40) - obs1, &
                         soil_temperature(48) - obs2, &
