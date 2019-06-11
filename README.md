@@ -1,5 +1,19 @@
 # GIPL_BMI_Fortran
-This is to develop a BMI for GIPL with FORTRAN.
+
+####This is to develop a BMI for GIPL with FORTRAN. Original GIPL code is avaiable at [this repository](https://github.com/Elchin/GIPL).
+
+####**NOTE: Currently, it is only 1D version. More works are required for the spatial version**
+
+####The main changes are:
+
+	- make a new function to advance the model step-by-step
+	- modify "initialize" & "update" to ensure passing changes in climatic forcing, soil parameters from BMI to the mode.
+	- add a new interface on the original model, in order to make as few as changes
+	- make the BMIs
+	- make tests and examples
+	- make cmake files
+	- modify "filexist". Removing "stop" in order to get a correct running status
+	- add an option to set write out to file or not, default is not.
 
 ### 1. Compile with cmake ###
 
@@ -31,6 +45,14 @@ This is to develop a BMI for GIPL with FORTRAN.
 ### 4. Comparison between GIPL-BMI outputs and GIPL outputs.
 
 ![Screenshot](./_images/check_results_with_benchmark.png)
+
+### 5. Known issues
+
+- Known issues are related to grid type, grid_id, grid_size, etc. The follow parameters could be set by using "set\_value\_at\_indices". Because these variables are defined at few layers rather than each soil node. For example, in the example case, "soil\_\_temperature" has 176 nodes while "soil\_water\_\_volume\_fraction" is set at 6 layers. It's possible to define a new grid\_id, grid\_type, etc for this kind of variables.
+
+ - "soil\_water\_\_volume\_fraction" ! VWC
+ - "soil\_unfrozen\_water\_\_a" ! UWC\_a
+ - "soil\_unfrozen\_water\_\_b" ! UWC\_b
 
 ### 5. Examples to use GIPL-BMI
 
