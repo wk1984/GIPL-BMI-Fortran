@@ -83,7 +83,7 @@ module bmigiplf
             component_name = "The 1D GIPL Model"
 
     ! Exchange items
-    integer, parameter :: input_item_count = 4
+    integer, parameter :: input_item_count = 6
     integer, parameter :: output_item_count = 2
     character (len = BMI_MAX_VAR_NAME), target, &
             dimension(input_item_count) :: input_items
@@ -112,9 +112,12 @@ contains
         input_items(2) = 'snowpack__depth'
         input_items(3) = 'snow__thermal_conductivity'
         input_items(4) = 'soil_water__volume_fraction'
+        input_items(5) = 'soil_unfrozen_water__a'
+        input_items(6) = 'soil_unfrozen_water__b'
 
         names => input_items
         bmi_status = BMI_SUCCESS
+
     end function gipl_input_var_names
 
     ! List output variables.
@@ -288,6 +291,10 @@ contains
         case('soil_water__volume_fraction')
             grid_id = 2
             bmi_status = BMI_SUCCESS
+        case('soil_unfrozen_water__a')
+            grid_id = 2
+        case('soil_unfrozen_water__b')
+            grid_id = 2
         case('soil__temperature')
             grid_id = 2
             bmi_status = BMI_SUCCESS
@@ -571,7 +578,16 @@ contains
         case("model_soil_layer__count")
             var_type = "integer"
             bmi_status = BMI_SUCCESS
+        case("soil_water__volume_fraction")
+            var_type = "real"
+            bmi_status = BMI_SUCCESS
         case("soil__temperature")
+            var_type = "real"
+            bmi_status = BMI_SUCCESS
+        case("soil_unfrozen_water__a")
+            var_type = "real"
+            bmi_status = BMI_SUCCESS
+        case("soil_unfrozen_water__b")
             var_type = "real"
             bmi_status = BMI_SUCCESS
         case("write_or_not")
@@ -602,6 +618,8 @@ contains
             bmi_status = BMI_SUCCESS
         case("soil__temperature")
             var_units = 'C'
+        case("soil_water__volume_fraction")
+            var_units = 'm3 m-3'
         case default
             var_units = "-"
             bmi_status = BMI_FAILURE
@@ -629,6 +647,12 @@ contains
             var_size = 1
         case("soil__temperature")
             var_size = (self%model%n_z)
+        case("soil_water__volume_fraction")
+            var_size = (self%model%n_lay)
+        case("soil_unfrozen_water__a")
+            var_size = (self%model%n_lay)
+        case("soil_unfrozen_water__b")
+            var_size = (self%model%n_lay)
         case default
             var_size = -1
             bmi_status = BMI_FAILURE
@@ -697,6 +721,12 @@ contains
             bmi_status = BMI_SUCCESS
         case('soil_water__volume_fraction')
             dest = [self%model%vwc]
+            bmi_status = BMI_SUCCESS
+        case('soil_unfrozen_water__a')
+            dest = [self%model%a_coef]
+            bmi_status = BMI_SUCCESS
+        case('soil_unfrozen_water__b')
+            dest = [self%model%b_coef]
             bmi_status = BMI_SUCCESS
         case default
             dest = [-1.0]
@@ -790,7 +820,8 @@ contains
         type (c_ptr) src
         real, pointer :: src_flattened(:)
         integer :: i, n_elements
-
+        select case(var_name)
+        end select
         return
     end function gipl_get_at_indices_float
 
@@ -846,6 +877,15 @@ contains
         case("snow__thermal_conductivity")
             self%model%stcon(self%model % top_run_time, 1) = src(1)
             bmi_status = BMI_SUCCESS
+        case('soil_water__volume_fraction')
+            print*, "please use [set_value_at_indices]"
+            bmi_status = BMI_FAILURE
+        case('soil_unfrozen_water__a')
+            print*, "please use [set_value_at_indices]"
+            bmi_status = BMI_FAILURE
+        case('soil_unfrozen_water__b')
+            print*, "please use [set_value_at_indices]"
+            bmi_status = BMI_FAILURE
         case default
             bmi_status = BMI_FAILURE
         end select
@@ -899,6 +939,18 @@ contains
         case("soil_water__volume_fraction")
             if (maxval(indices) .le. self%model%n_lay) then
                 self%model%vwc(indices, 1) = src(:)
+            else
+                bmi_status = BMI_FAILURE
+            end if
+        case("soil_unfrozen_water__a")
+            if (maxval(indices) .le. self%model%n_lay) then
+                self%model%a_coef(indices, 1) = src(:)
+            else
+                bmi_status = BMI_FAILURE
+            end if
+        case("soil_unfrozen_water__b")
+            if (maxval(indices) .le. self%model%n_lay) then
+                self%model%b_coef(indices, 1) = src(:)
             else
                 bmi_status = BMI_FAILURE
             end if
