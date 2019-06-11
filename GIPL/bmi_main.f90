@@ -72,8 +72,8 @@ program bmi_main
     else
 
         write(*, "(a)") "Initialized"
-        
-        s = model%set_value('write_or_not',[1])
+
+        s = model%set_value('write_or_not', [1])
 
         ! Get time variables:
         s = model%get_current_time(current_time)
@@ -134,7 +134,9 @@ program bmi_main
 
         write(*, *) 'Compare with benchmark ... '
 
-        write(*, '(A5, 1x, A8, 1X, A8, 1X,A8, 1X,A8, 1X,A8, 1X,A8)') 'T', 'Tair', 'Snow', '0.001m', 'Tg 0.08m', 'Tg 0.12m', &
+        write(*, '(A5, 1x, A8, 1X, A8, 1X,A8, 1X,A8, 1X,A8, 1X,A8)') &
+                'T', 'Tair', 'Snow', &
+                '0.001m', 'Tg 0.08m', 'Tg 0.12m', &
                 'Tg 0.20m'
 
         do i = 1, int(end_time)
@@ -143,7 +145,7 @@ program bmi_main
 
                 ! change VWC in first soil layer in 'geo.txt' file.
 
-!                s = model%set_value_at_indices(var_name4, [1], [0.1])
+                !                s = model%set_value_at_indices(var_name4, [1], [0.1])
 
             end if
 
@@ -151,7 +153,7 @@ program bmi_main
 
                 ! change UWC_a in first soil layer in 'geo.txt' file.
 
-!                s = model%set_value_at_indices(var_name5, [1], [0.1])
+                !                s = model%set_value_at_indices(var_name5, [1], [0.1])
 
             end if
 
@@ -159,25 +161,25 @@ program bmi_main
 
                 ! change UWC_b in first soil layer in 'geo.txt' file.
 
-               s = model%set_value_at_indices(var_name6, [1], [-0.5])
+                !                s = model%set_value_at_indices(var_name6, [1], [-0.5])
 
             end if
 
             if (i .eq. 95) then ! change air temperature at the 5th time step.
 
-!                 s = model%set_value('land_surface_air__temperature', [-10.0])
+                !                 s = model%set_value('land_surface_air__temperature', [-10.0])
 
             end if
 
             if (i .eq. 100) then ! change snow depth at the 100th time step.
 
-!                            s = model%set_value('snowpack__depth', [0.1])
+                !                            s = model%set_value('snowpack__depth', [0.1])
 
             end if
 
             if (i .eq. 110) then ! change snow thermal conductivity at the 110th time step.
 
-!                             s = model%set_value('snow__thermal_conductivity', [0.01])
+                !                             s = model%set_value('snow__thermal_conductivity', [0.01])
 
             end if
 
