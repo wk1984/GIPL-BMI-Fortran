@@ -9,4 +9,14 @@ This is to develop a BMI for GIPL with FORTRAN.
 > `source ../scripts/update_rpaths.sh`  
 > `ctest`
 > 
-> `cmake .. -DCMAKE_INSTALL_PREFIX=~/Documents/test`
+
+### 2. Current input variables
+
+| Standard Name                             | Description                                                                                                                       | Unit     | Type    |
+|-------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|----------|---------|
+| land\_surface\_air\_\_temperature             | SURFACE TEMPERATURE FIELDS (TEMPERATURES FROM THE START TO THE END OF THE INTERVAL)                                               | deg.C    | Real    |
+| snowpack\_\_depth                   | SNOW DEPTH                | cm     | Real |
+| snow\_\_thermal\_conductivity                   | SNOW THERMAL CONDUCTIVITY                | W m-1 K-1    | Real |
+| soil\_water\_\_volume\_fraction                   | Volumetric Water Content                | m3 m-3    | Real |
+| soil\_unfrozen\_water\_\_a                  | Soil Unfrozen Water Parameter 'a'                | -    | Real |
+| soil\_unfrozen\_water\_\_b                  | Soil Unfrozen Water Parameter 'b'                | -    | Real |
