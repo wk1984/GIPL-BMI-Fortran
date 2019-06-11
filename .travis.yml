@@ -1,6 +1,5 @@
 language: generic
 os:
-  - linux
   - osx
 env:
   global:
@@ -38,4 +37,6 @@ install:
 before_script:
 - source ../scripts/update_rpaths.sh
 
-script: ctest
+script: 
+- cd $TRAVIS_BUILD_DIR/install_test/bin
+- ./run_bmigipl_model test.cfg
