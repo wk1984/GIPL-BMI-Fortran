@@ -477,12 +477,12 @@ contains
 
         type(gipl_model_type) :: model
 
-        integer IREAD, ierr, status_final, status_temp
+        integer IREAD, ierr, status, status_temp
         integer :: i, j, k, z_num, i_grd, j_time, i_site, i_lay
 
         real*8, allocatable :: gtzone(:, :)
         character*64 stdummy
-        character*64 fconfig
+        character*164 fconfig
 
         character*164 file_sites, file_bound, file_snow, file_rsnow, file_init
         character*164 file_grid, file_organic, file_mineral
@@ -500,9 +500,9 @@ contains
         real*8, allocatable :: z(:) ! vertical grid
         real*8 :: hcscale
 
-        call filexist(fconfig, status_final)
+        call filexist(fconfig, status)
 
-        if (status_final .eq. 1) then
+        if (status .eq. 1) then
             open(60, file = fconfig)
             !read input files
             read(60, '(A)') stdummy
@@ -552,23 +552,23 @@ contains
             model%n_time = n_time
 
             call filexist(file_sites, status_temp)
-            status_final = status_final + status_temp
+            status = status + status_temp
             call filexist(file_bound, status_temp)
-            status_final = status_final + status_temp
+            status = status + status_temp
             call filexist(file_snow, status_temp)
-            status_final = status_final + status_temp
+            status = status + status_temp
             call filexist(file_rsnow, status_temp)
-            status_final = status_final + status_temp
+            status = status + status_temp
             call filexist(file_grid, status_temp)
-            status_final = status_final + status_temp
+            status = status + status_temp
             call filexist(file_init, status_temp)
-            status_final = status_final + status_temp
+            status = status + status_temp
             call filexist(file_mineral, status_temp)
-            status_final = status_final + status_temp
+            status = status + status_temp
             call filexist(file_organic, status_temp)
-            status_final = status_final + status_temp
+            status = status + status_temp
 
-            if (status_final .eq. 9) then
+            if (status .eq. 9) then
 
                 open(60, FILE = file_sites)
                 read(60, *) n_site
@@ -1428,13 +1428,13 @@ subroutine stefan1D(temps, n_grd, dz, time_loop, isite, lay_idx, flux)
 end subroutine stefan1D
 
 subroutine filexist(filename, status)
-    character*64 filename
+    character*164 filename
     logical chf
     integer status
-    inquire(file = trim(adjustl(filename)), exist = chf)
+    inquire(file = filename, exist = chf)
     status = 1
     if (.not.chf) then
-        write(*, '(/'' FILE '',a, '' DOESNT EXIST'')') trim(adjustl(filename))
+        write(*, '(/'' FILE '',a, '' DOESNT EXIST'')') trim(filename)
         status = 0
         !         stop
     endif
