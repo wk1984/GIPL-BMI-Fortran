@@ -8,7 +8,16 @@ program bmi_main
     character (len = *), parameter :: var_name2 = "snowpack__depth"
     character (len = *), parameter :: var_name3 = "snow__thermal_conductivity"
 
+    !-------------------------------
+    ! These parameters could be set by using "set_value_at_indices"
+    ! Known issues are related to grid type, grid_id, grid_size, etc.
+    ! Because these variables are defined at few layers rather than each soil node.
+
     character (len = *), parameter :: var_name4 = "soil_water__volume_fraction" ! VWC
+    character (len = *), parameter :: var_name5 = "soil_unfrozen_water__a" ! UWC_a
+    character (len = *), parameter :: var_name6 = "soil_unfrozen_water__b" ! UWC_b
+
+    !-------------------------------
 
     character (len = *), parameter :: out_name2 = 'model_soil_layer__count'
     character (len = *), parameter :: out_name1 = "soil__temperature"
@@ -39,7 +48,7 @@ program bmi_main
     !    real, dimension(10) :: vwc, uwc_a, uwc_b, hc_a, hc_b, kt, kf
 
     real, allocatable :: soil_temperature(:)
-    real, allocatable :: depth(:)
+    double precision, allocatable :: depth(:)
     double precision, allocatable :: dz(:)
 
     type (bmi_gipl) :: model
@@ -75,7 +84,7 @@ program bmi_main
         print*, 'Total soil nodes:', soil_nodes_number
 
         allocate(soil_temperature(soil_nodes_number))
-        allocate(dz(soil_nodes_number))
+        allocate(depth(soil_nodes_number))
 
         ! Get air temperature
         s = model%get_var_grid(var_name1, grid_id1)
@@ -111,7 +120,11 @@ program bmi_main
         write(*, '("Initial Time  = ",f0.1)') current_time
         write(*, '("Final Time    = ",f0.1)') end_time
 
-        s = model%get_grid_z(out_grid_id1, dz) ! get depths
+        s = model%get_grid_z(out_grid_id1, depth) ! get depths
+
+        do i = 1, soil_nodes_number
+            write(*, '(I5, F8.3)') i, depth(i)
+        end do
 
         allocate(temperature(grid_size1))
         allocate(snow_depth(grid_size2))
@@ -130,7 +143,23 @@ program bmi_main
 
                 ! change VWC in first soil layer in 'geo.txt' file.
 
-                s = model%set_value_at_indices(var_name4, [1], [0.1])
+!                s = model%set_value_at_indices(var_name4, [1], [0.1])
+
+            end if
+
+            if (i .eq. 92) then
+
+                ! change UWC_a in first soil layer in 'geo.txt' file.
+
+!                s = model%set_value_at_indices(var_name5, [1], [0.1])
+
+            end if
+
+            if (i .eq. 92) then
+
+                ! change UWC_b in first soil layer in 'geo.txt' file.
+
+!                s = model%set_value_at_indices(var_name6, [1], [-0.5])
 
             end if
 
