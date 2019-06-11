@@ -1,10 +1,10 @@
 # GIPL_BMI_Fortran
 
-####This is to develop a BMI for GIPL with FORTRAN. Original GIPL code is avaiable at [this repository](https://github.com/Elchin/GIPL).
+#### This is to develop a BMI for GIPL with FORTRAN. Original GIPL code is avaiable at [this repository](https://github.com/Elchin/GIPL).
 
-####**NOTE: Currently, it is only 1D version. More works are required for the spatial version**
+#### **NOTE: Currently, it is only 1D version. More works are required for the spatial version**
 
-####The main changes are:
+#### The main changes are:
 
 	- make a new function to advance the model step-by-step
 	- modify "initialize" & "update" to ensure passing changes in climatic forcing, soil parameters from BMI to the mode.
