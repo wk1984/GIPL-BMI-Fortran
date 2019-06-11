@@ -10,7 +10,7 @@ This is to develop a BMI for GIPL with FORTRAN.
 > `ctest`
 > 
 
-### 2. Current input variables
+### 2. Current input variables [will be added in future]
 
 | Standard Name                             | Description                                                                                                                       | Unit     | Type    |
 |-------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|----------|---------|
@@ -20,3 +20,11 @@ This is to develop a BMI for GIPL with FORTRAN.
 | soil\_water\_\_volume\_fraction                   | Volumetric Water Content                | m3 m-3    | Real |
 | soil\_unfrozen\_water\_\_a                  | Soil Unfrozen Water Parameter 'a'                | -    | Real |
 | soil\_unfrozen\_water\_\_b                  | Soil Unfrozen Water Parameter 'b'                | -    | Real |
+
+### 3. Current output variables [will be added in future]
+
+| Standard Name                             | Description                                                                                                                       | Unit     | Type    |
+|-------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|----------|---------|
+| soil\_\_temperature             | SOIL TEMPERATURE at all Nodes (including snow layers when there are snow covered)                                              | deg.C    | Real    |
+| model\_soil\_layer\_\_count             | number of all nodes (including snow layers when there are snow covered)                                              | -    | integer    |
+
