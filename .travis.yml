@@ -2,6 +2,7 @@ language: generic
 
 os:
   - osx
+  - linux
 
 env:
   global:
