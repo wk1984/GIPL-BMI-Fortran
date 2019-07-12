@@ -38,7 +38,7 @@ install:
 before_script:
   - |
     if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      source ../bin/update_rpaths.sh
+      source ../scripts/update_rpaths.sh
     fi
 
 script: 
