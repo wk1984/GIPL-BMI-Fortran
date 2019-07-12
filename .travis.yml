@@ -22,13 +22,8 @@ before_install:
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
   - conda install python=$TRAVIS_PYTHON_VERSION
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      conda install gcc libgfortran cmake
-    else
-      conda install gfortran_linux-64 cmake
-      export FC=$CONDA_PREFIX/bin/x86_64-conda_cos6-linux-gnu-gfortran
-    fi
+  - conda install gfortran_$TRAVIS_OS_NAME-64 cmake
+  - source activate root
 
 install:
   - cd $TRAVIS_BUILD_DIR
