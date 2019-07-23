@@ -2,11 +2,11 @@ program test_set_value
 
   use bmif_1_2, only: BMI_SUCCESS, BMI_FAILURE
   use bmigiplf
-  use fixtures, only: status, print_array
+  use fixtures, only: status, print_array, config_file
 
   implicit none
 
-  character (len=*), parameter :: config_file = "test.cfg"
+  !character (len=256), parameter :: config_file = "test.cfg"
   type (bmi_gipl) :: m
   integer :: retcode
 
