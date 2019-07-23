@@ -6,7 +6,7 @@ program test_initialize
 
   implicit none
 
-  character (len=*), parameter :: config_file1 = "test.cfg"
+  character (len=256), parameter :: config_file1 = "test.cfg"
 
   type (bmi_gipl) :: m
   integer :: status1, status2, s
