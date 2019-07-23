@@ -9,13 +9,14 @@ program get_value_ex
   type (bmi_gipl) :: m
   integer :: s, i, j, grid_id
   character (len=BMI_MAX_VAR_NAME), pointer :: names(:)
+  character (len=BMI_MAX_VAR_NAME), parameter :: config_file = "test.cfg"
   integer :: grid_size, dims(2), locations(3)
   real, allocatable :: z(:), y(:)
   real, pointer :: x(:)
   double precision :: time
 
   write (*,"(a)",advance="no") "Initializing..."
-  s = m%initialize("test.cfg")
+  s = m%initialize(config_file)
   write (*,*) "Done."
 
   s = m%get_output_var_names(names)
