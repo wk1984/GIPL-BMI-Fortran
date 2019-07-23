@@ -2,10 +2,11 @@
 program change_air_temperature_ex
 
   use bmigiplf
+  use bmif_1_2, only: BMI_MAX_VAR_NAME
   use testing_helpers, only: print_array
   implicit none
 
-  character (len=*), parameter :: config_file = "test.cfg"
+  character (len=BMI_MAX_VAR_NAME), parameter :: config_file = "test.cfg"
   character (len=*), parameter :: &
        dname = "land_surface_air__temperature"
   character (len=*), parameter :: &
