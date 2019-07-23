@@ -6,7 +6,7 @@ program test_get_value
 
   implicit none
 
-  character (len=*), parameter :: config_file = "test.cfg"
+  character (len=256), parameter :: config_file = "test.cfg"
   type (bmi_gipl) :: m
   integer :: retcode
 
@@ -40,7 +40,7 @@ contains
     status = m%get_value(var_name, tval)
     status = m%finalize()
     
-    print *, tval(1), abs(tval(1) - expected)
+    print *, abs(tval(1) - expected)
 
     ! Visual inspection.
     write(*,*) "Test 1"
