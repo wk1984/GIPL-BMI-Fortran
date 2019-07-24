@@ -39,8 +39,8 @@ program vargrid_test
   write (*,"(a, 3(1x, i3))") "Grid shape:", iarray
   s = m%get_grid_size(grid_id, asize)
   write (*,"(a, i8)") "Grid size:", asize
-  s = m%get_grid_spacing(grid_id, darray2)
-  write (*,"(a, 1x, 5(f8.4))") "Grid spacing:", darray2(1:5)
+  ! s = m%get_grid_spacing(grid_id, darray2)
+  ! write (*,"(a, 1x, 5(f8.4))") "Grid spacing:", darray2(1:5)
   
   s = m%get_var_itemsize(names(1), asize)
   write (*,"(a, i8, 1x, a)") "Item size:", asize, "bytes"
