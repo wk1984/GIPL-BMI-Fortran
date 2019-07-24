@@ -1,12 +1,18 @@
 language: generic
+
 os:
   - osx
+  - linux
+
 env:
+  matrix:
+    - TRAVIS_PYTHON_VERSION="2.7"
+    - TRAVIS_PYTHON_VERSION="3.*"
+
   global:
     - CONDA_PREFIX=$HOME/conda
-    - MINICONDA_URL_BASE="https://repo.continuum.io/miniconda/Miniconda2-latest"
-    - TRAVIS_PYTHON_VERSION="2.7"
-sudo: false
+    - MINICONDA_URL_BASE="https://repo.continuum.io/miniconda/Miniconda3-latest"
+
 before_install:
   - |
     if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
@@ -20,23 +26,20 @@ before_install:
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
   - conda install python=$TRAVIS_PYTHON_VERSION
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      conda install gcc libgfortran cmake
-    else
-      conda install gfortran_linux-64 cmake
-      export FC=$CONDA_PREFIX/bin/x86_64-conda_cos6-linux-gnu-gfortran
-    fi
+  - conda install gfortran_$TRAVIS_OS_NAME-64 cmake
+  - source activate root
 
 install:
-- cd $TRAVIS_BUILD_DIR
-- mkdir install_test
-- mkdir _build && cd _build
-- cmake .. -DCMAKE_INSTALL_PREFIX=$TRAVIS_BUILD_DIR/install_test
-- make install
+  - mkdir _build && cd _build
+  - cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+  - make
+  - make install
+
 before_script:
-- source ../scripts/update_rpaths.sh
+  - |
+    if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      source ../scripts/update_rpaths.sh
+    fi
 
 script: 
-- cd $TRAVIS_BUILD_DIR/install_test/bin
-- ./run_bmigipl_model test.cfg
+  - ctest --output-on-failure

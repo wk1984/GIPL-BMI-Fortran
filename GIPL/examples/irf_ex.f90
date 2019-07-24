@@ -1,7 +1,7 @@
 ! Test the lifecycle and time BMI methods.
 program irf_test
 
-  use bmif_1_2, only: BMI_MAX_UNITS_NAME
+  use bmif_1_2, only: BMI_MAX_UNITS_NAME, BMI_MAX_VAR_NAME
   use bmigiplf
   implicit none
 
@@ -9,9 +9,9 @@ program irf_test
   integer :: s, i
   double precision :: time, time0, time1
   character (len=BMI_MAX_UNITS_NAME) :: time_units
-
+  character (len=BMI_MAX_VAR_NAME), parameter :: config_file = "test.cfg"
   write (*,"(a)",advance="no") "Initializing..."
-  s = m%initialize("test.cfg")
+  s = m%initialize(config_file)
   write (*,*) "Done."
 
   s = m%get_start_time(time0)
