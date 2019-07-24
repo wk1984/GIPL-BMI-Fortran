@@ -713,13 +713,13 @@ contains
 
         select case(var_name)
         case("land_surface_air__temperature")
-            dest = [self%model%utemp(self%model % top_run_time, 1)]
+            dest = [self%model%utemp(int(self%model % top_run_time), 1)]
             bmi_status = BMI_SUCCESS
         case("snowpack__depth")
-            dest = [self%model%snd(self%model % top_run_time, 1)]
+            dest = [self%model%snd(int(self%model % top_run_time), 1)]
             bmi_status = BMI_SUCCESS
         case("snow__thermal_conductivity")
-            dest = [self%model%stcon(self%model % top_run_time, 1)]
+            dest = [self%model%stcon(int(self%model % top_run_time), 1)]
             bmi_status = BMI_SUCCESS
         case("soil__temperature")
             dest = [self%model%temp ]
@@ -874,13 +874,13 @@ contains
 
         select case(var_name)
         case("land_surface_air__temperature")
-            self%model%utemp(self%model % top_run_time, 1) = src(1)
+            self%model%utemp(int(self%model % top_run_time), 1) = src(1)
             bmi_status = BMI_SUCCESS
         case("snowpack__depth")
-            self%model%snd(self%model % top_run_time, 1) = src(1)
+            self%model%snd(int(self%model % top_run_time), 1) = src(1)
             bmi_status = BMI_SUCCESS
         case("snow__thermal_conductivity")
-            self%model%stcon(self%model % top_run_time, 1) = src(1)
+            self%model%stcon(int(self%model % top_run_time), 1) = src(1)
             bmi_status = BMI_SUCCESS
         case('soil_water__volume_fraction')
             print*, "please use [set_value_at_indices]"

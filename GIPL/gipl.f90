@@ -424,7 +424,6 @@ contains
                     enddo
                 endif
             endif
-
         else
             time_loop = model % top_run_time - 2
             do i_site = 1, n_site
@@ -455,9 +454,9 @@ contains
             endif
         endif
 
-        model % tair_cur = utemp(model % top_run_time, 1)
-        model % snd_cur = snd(model % top_run_time, 1)
-        model % stcon_cur = stcon(model % top_run_time, 1)
+        model % tair_cur = utemp(int(model % top_run_time), 1)
+        model % snd_cur = snd(int(model % top_run_time), 1)
+        model % stcon_cur = stcon(int(model % top_run_time), 1)
 
         model % top_run_time = model % top_run_time + 1 * time_step
 
@@ -904,9 +903,9 @@ contains
 
                 model%initialize_status = 1
 
-                model % tair_cur = utemp(model % top_run_time, 1)
-                model % snd_cur = snd(model % top_run_time, 1)
-                model % stcon_cur = stcon(model % top_run_time, 1)
+                model % tair_cur = utemp(int(model % top_run_time), 1)
+                model % snd_cur = snd(int(model % top_run_time), 1)
+                model % stcon_cur = stcon(int(model % top_run_time), 1)
 
                 !        model%write_outputs_or_not = 0 ! 1: write out to file, 0: not.
             endif

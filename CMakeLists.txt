@@ -14,8 +14,8 @@ set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/mod)
 set(CMAKE_MACOSX_RPATH 1)
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
-add_subdirectory(gipl)
-add_subdirectory(gipl/tests)
-add_subdirectory(gipl/examples)
+add_subdirectory(GIPL)
+add_subdirectory(GIPL/tests)
+add_subdirectory(GIPL/examples)
 
 include(CTest)
