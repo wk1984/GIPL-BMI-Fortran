@@ -645,14 +645,19 @@ contains
             bmi_status = BMI_SUCCESS
         case("model_soil_layer__count")
             var_size = 1
+            bmi_status = BMI_SUCCESS
         case("soil__temperature")
-            var_size = (self%model%n_z)
+            var_size = self%model%n_z
+            bmi_status = BMI_SUCCESS
         case("soil_water__volume_fraction")
-            var_size = (self%model%n_lay)
+            var_size = self%model%n_lay
+            bmi_status = BMI_SUCCESS
         case("soil_unfrozen_water__a")
-            var_size = (self%model%n_lay)
+            var_size = self%model%n_lay
+            bmi_status = BMI_SUCCESS
         case("soil_unfrozen_water__b")
-            var_size = (self%model%n_lay)
+            var_size = self%model%n_lay
+            bmi_status = BMI_SUCCESS
         case default
             var_size = -1
             bmi_status = BMI_FAILURE
@@ -670,7 +675,7 @@ contains
         s1 = self%get_var_grid(var_name, grid_id)
         s2 = self%get_grid_size(grid_id, grid_size)
         s3 = self%get_var_itemsize(var_name, item_size)
-
+        
         if ((s1 == BMI_SUCCESS).and.(s2 == BMI_SUCCESS).and.(s3 == BMI_SUCCESS)) then
             var_nbytes = item_size * grid_size
             bmi_status = BMI_SUCCESS
