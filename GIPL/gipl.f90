@@ -870,7 +870,7 @@ contains
                 model%zdepth = zdepth
                 model%zdepth_id = zdepth_id
 
-                model%dz = dz
+                model%dz = dz * zdepth(n_grd)
                 model%temp = temp
                 model%lay_id = lay_id
                 model%temp_frz = temp_frz
