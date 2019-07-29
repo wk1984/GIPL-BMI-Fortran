@@ -489,7 +489,7 @@ contains
         character*164 file_sites, file_bound, file_snow, file_rsnow, file_init
         character*164 file_grid, file_organic, file_mineral
 
-        character*164:: c_path, config_file_path, c_path_out
+        character*164 :: c_path, config_file_path, c_path_out
         integer :: last_path_separator
         character path_separator, delimiter_detect
 
@@ -573,8 +573,8 @@ contains
                 print *, config_file_path
 
                 c_path = config_file_path
-                else
-                c_path  = trim(adjustl(config_file_path))//trim(adjustl(c_path))
+            else
+                c_path = trim(adjustl(config_file_path)) // trim(adjustl(c_path))
 
             endif
 
@@ -584,8 +584,8 @@ contains
                 print *, config_file_path
 
                 c_path_out = config_file_path
-                else
-                c_path_out  = trim(adjustl(config_file_path))//trim(adjustl(c_path_out))
+            else
+                c_path_out = trim(adjustl(config_file_path)) // trim(adjustl(c_path_out))
 
             endif
             close(60)
@@ -599,18 +599,18 @@ contains
 
             ! add the folder on file names:
 
-            file_sites = trim(adjustl(c_path))//file_sites
-            file_bound = trim(adjustl(c_path))//file_bound
-            file_snow  = trim(adjustl(c_path))//file_snow
-            file_rsnow = trim(adjustl(c_path))//file_rsnow
-            file_grid  = trim(adjustl(c_path))//file_grid
-            file_init  = trim(adjustl(c_path))//file_init
-            file_mineral = trim(adjustl(c_path))//file_mineral
-            file_organic = trim(adjustl(c_path))//file_organic
+            file_sites = trim(adjustl(c_path)) // file_sites
+            file_bound = trim(adjustl(c_path)) // file_bound
+            file_snow = trim(adjustl(c_path)) // file_snow
+            file_rsnow = trim(adjustl(c_path)) // file_rsnow
+            file_grid = trim(adjustl(c_path)) // file_grid
+            file_init = trim(adjustl(c_path)) // file_init
+            file_mineral = trim(adjustl(c_path)) // file_mineral
+            file_organic = trim(adjustl(c_path)) // file_organic
 
-            aver_res_file = trim(adjustl(c_path_out))//aver_res_file
-            restart_file  = trim(adjustl(c_path_out))//restart_file
-            result_file   = trim(adjustl(c_path_out))//result_file
+            aver_res_file = trim(adjustl(c_path_out)) // aver_res_file
+            restart_file = trim(adjustl(c_path_out)) // restart_file
+            result_file = trim(adjustl(c_path_out)) // result_file
 
             call filexist(file_sites, status_temp)
             status = status + status_temp
@@ -1502,19 +1502,19 @@ subroutine filexist(filename, status)
 end subroutine filexist
 !-----------------------------------------------
 function delimiter_detect() result(delim)
-    character(LEN=1) :: delim
-    character(LEN=258) :: path
+    character(LEN = 1) :: delim
+    character(LEN = 258) :: path
     integer :: ii, stat_out
-    call GET_ENVIRONMENT_VARIABLE('HOME',path,status=stat_out)
+    call GET_ENVIRONMENT_VARIABLE('HOME', path, status = stat_out)
     if (stat_out/=0) go to 999
     ! xxx path='xx\' ! alternate test
-    do ii=1, 258
-        delim=path(ii:ii)
+    do ii = 1, 258
+        delim = path(ii:ii)
         if (delim=='/'.or.delim=='\') return
         ! ... Note: emacs does not recognize the second delimiter test
     enddo
     999 continue
-    write(*,'(1x,a/1x,a/1x,a)') 'Could not obtain home directory path.', &
+    write(*, '(1x,a/1x,a/1x,a)') 'Could not obtain home directory path.', &
             'Restart program and manually insert path', &
             'to folder/directory containing input files.'
     stop
