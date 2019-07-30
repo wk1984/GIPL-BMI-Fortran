@@ -115,6 +115,9 @@ module gipl_model
 
         integer :: initialize_status !1: pass, 0: failure.
 
+        character(164) :: input_dir, output_dir
+        CHARACTER(LEN = 1) :: path_separator
+
         ! copy from const
 
         real*8 :: hcap_snow ! heat capacity of snow (constant)
@@ -486,6 +489,10 @@ contains
         character*164 file_sites, file_bound, file_snow, file_rsnow, file_init
         character*164 file_grid, file_organic, file_mineral
 
+        character*164 :: c_path, config_file_path, c_path_out
+        integer :: last_path_separator
+        character path_separator, delimiter_detect
+
         real*8, allocatable :: A1(:, :), A2(:, :), A3(:, :), A4(:, :), A5(:, :)
         real*8, allocatable :: A6(:, :), A7(:, :), A8(:, :), A9(:, :), A10(:, :)
         integer, allocatable :: veg_class(:), num_vl(:)
@@ -500,6 +507,18 @@ contains
         real*8 :: hcscale
 
         call filexist(fconfig, status)
+
+        ! guess the path of cfg file:
+        path_separator = delimiter_detect()
+
+        ! Chk wether there is at least one separator:
+        last_path_separator = index(trim(adjustl(fconfig)), path_separator)
+        if (last_path_separator .eq. 0) then ! No found
+            config_file_path = './'
+        else
+            last_path_separator = index(fconfig, path_separator, back = .true.)
+            config_file_path = fconfig(1:last_path_separator)
+        endif
 
         if (status .eq. 1) then
             open(60, file = fconfig)
@@ -541,6 +560,32 @@ contains
             read(60, '(A)') stdummy
             read(60, *) sat_coef
 
+            READ(60, '(A)') stdummy
+            READ(60, '(A)') c_path
+            READ(60, '(A)') stdummy
+            READ(60, '(A)') c_path_out
+
+            if (sizeof(trim(adjustl(c_path))) .eq. 0) then
+                print *, '*** Warning: No available path, will try to find inputs'
+                print *, 'from the same folder of this configuration :'
+                print *, config_file_path
+
+                c_path = config_file_path
+            else
+                c_path = trim(adjustl(config_file_path)) // trim(adjustl(c_path))
+
+            endif
+
+            if (sizeof(trim(adjustl(c_path_out))) .eq. 0) then
+                print *, '*** Warning: No available output path, will try to write outputs'
+                print *, 'to the same folder of this configuration :'
+                print *, config_file_path
+
+                c_path_out = config_file_path
+            else
+                c_path_out = trim(adjustl(config_file_path)) // trim(adjustl(c_path_out))
+
+            endif
             close(60)
 
             ! pass values to model interface:
@@ -549,6 +594,21 @@ contains
             model%restart = restart
             model%time_step = time_step
             model%n_time = n_time
+
+            ! add the folder on file names:
+
+            file_sites = trim(adjustl(c_path)) // file_sites
+            file_bound = trim(adjustl(c_path)) // file_bound
+            file_snow = trim(adjustl(c_path)) // file_snow
+            file_rsnow = trim(adjustl(c_path)) // file_rsnow
+            file_grid = trim(adjustl(c_path)) // file_grid
+            file_init = trim(adjustl(c_path)) // file_init
+            file_mineral = trim(adjustl(c_path)) // file_mineral
+            file_organic = trim(adjustl(c_path)) // file_organic
+
+            aver_res_file = trim(adjustl(c_path_out)) // aver_res_file
+            restart_file = trim(adjustl(c_path_out)) // restart_file
+            result_file = trim(adjustl(c_path_out)) // result_file
 
             call filexist(file_sites, status_temp)
             status = status + status_temp
@@ -1439,4 +1499,21 @@ subroutine filexist(filename, status)
     endif
 end subroutine filexist
 !-----------------------------------------------
-
+function delimiter_detect() result(delim)
+    character(LEN = 1) :: delim
+    character(LEN = 258) :: path
+    integer :: ii, stat_out
+    call GET_ENVIRONMENT_VARIABLE('HOME', path, status = stat_out)
+    if (stat_out/=0) go to 999
+    ! xxx path='xx\' ! alternate test
+    do ii = 1, 258
+        delim = path(ii:ii)
+        if (delim=='/'.or.delim=='\') return
+        ! ... Note: emacs does not recognize the second delimiter test
+    enddo
+    999 continue
+    write(*, '(1x,a/1x,a/1x,a)') 'Could not obtain home directory path.', &
+            'Restart program and manually insert path', &
+            'to folder/directory containing input files.'
+    stop
+end function delimiter_detect

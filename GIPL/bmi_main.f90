@@ -58,7 +58,7 @@ program bmi_main
     integer, dimension (3) :: out_grid_shape1
 
     IF (COMMAND_ARGUMENT_COUNT() .EQ. 0) THEN
-        fconfig = 'gipl_config.cfg'
+        fconfig = 'examples/test.cfg'
     ELSE
         CALL GET_COMMAND_ARGUMENT(1, fconfig)
     ENDIF
@@ -130,10 +130,6 @@ program bmi_main
         allocate(snow_depth(grid_size2))
         allocate(snow_conductivity(grid_size3))
 
-        open(1991, file = 'origin_out/result.txt.txt', status = 'OLD') ! open the benchmark output
-
-        write(*, *) 'Compare with benchmark ... '
-
         write(*, '(A5, 1x, A8, 1X, A8, 1X,A8, 1X,A8, 1X,A8, 1X,A8)') &
                 'T', 'Tair', 'Snow', &
                 '0.001m', 'Tg 0.08m', 'Tg 0.12m', &
@@ -191,23 +187,19 @@ program bmi_main
 
             s = model%get_value(out_name1, soil_temperature)
 
-            read(1991, *) x, x, obs5, obs6, obs1, obs2, obs3, obs4
-
             if ((i .le. 130) .and. (i .ge. 91)) then
 
                 write(*, '(I5, 1x, F8.3, 1X, F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3, 1X,F8.3)') &
-                        i, temperature - obs5, snow_depth - obs6, &
-                        soil_temperature(40) - obs1, &
-                        soil_temperature(48) - obs2, &
-                        soil_temperature(50) - obs3, &
-                        soil_temperature(54) - obs4
+                        i, temperature, snow_depth, &
+                        soil_temperature(40), &
+                        soil_temperature(48), &
+                        soil_temperature(50), &
+                        soil_temperature(54)
 
             end if
         enddo
 
         s = model%finalize()
-
-        close(1991)
 
     endif
 

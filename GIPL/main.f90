@@ -5,7 +5,7 @@ program gipl2
 
     real*8 :: run_time_start, run_time_final
 
-    character*164 fconfig
+    character*164 fconfig, dirname
 
     real, allocatable :: x(:), y(:)
 
@@ -13,7 +13,7 @@ program gipl2
 
     model%write_outputs_or_not = 1
 
-    fconfig = 'test.cfg'
+    fconfig = 'examples/test.cfg'
 
     call initialize(model, fconfig)
 
@@ -22,6 +22,10 @@ program gipl2
     !
     x = model % zdepth
     y = model % temp(1, :)
+    
+    status = getcwd( dirname )
+    
+    !print*, dirname
 
     ! temp(1,40): soil surface temperature.
 
@@ -41,7 +45,7 @@ program gipl2
 
         call update(model)
 
-        print*, cur_time, model % temp(1, 40)
+        !print*, cur_time, model % temp(1, 40)
 
     enddo
 
