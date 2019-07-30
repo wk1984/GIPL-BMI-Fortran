@@ -520,8 +520,6 @@ contains
             config_file_path = fconfig(1:last_path_separator)
         endif
 
-        print*, fconfig, last_path_separator
-
         if (status .eq. 1) then
             open(60, file = fconfig)
             !read input files
