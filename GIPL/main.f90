@@ -25,7 +25,7 @@ program gipl2
     
     status = getcwd( dirname )
     
-    print*, dirname
+    !print*, dirname
 
     ! temp(1,40): soil surface temperature.
 
