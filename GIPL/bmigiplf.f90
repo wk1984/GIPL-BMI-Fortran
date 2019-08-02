@@ -779,7 +779,10 @@ contains
         type (c_ptr) :: src
         integer :: n_elements
 
-        return
+        select case(var_name)
+        case default
+            bmi_status = BMI_FAILURE
+        end select
     end function gipl_get_ptr_float
 
     ! Get a reference to an double-valued variable, flattened.
