@@ -895,6 +895,9 @@ contains
         case('soil_unfrozen_water__b')
             print*, "please use [set_value_at_indices]"
             bmi_status = BMI_FAILURE
+        case("soil__temperature")
+            self%model%temp = reshape(src, [self%model%n_site, self%model%n_z])
+            bmi_status = BMI_SUCCESS
         case default
             bmi_status = BMI_FAILURE
         end select
