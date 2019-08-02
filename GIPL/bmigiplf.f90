@@ -343,6 +343,7 @@ contains
             bmi_status = BMI_SUCCESS
         case(2)
             grid_rank = 3
+            bmi_status = BMI_SUCCESS
         case default
             grid_rank = -1
             bmi_status = BMI_FAILURE
