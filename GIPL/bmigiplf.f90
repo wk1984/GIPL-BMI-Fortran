@@ -319,7 +319,7 @@ contains
             grid_type = "scalar"
             bmi_status = BMI_SUCCESS
         case(2)
-            grid_type = "three_dims"
+            grid_type = "rectilinear"
             bmi_status = BMI_SUCCESS
         case default
             grid_type = "-"
