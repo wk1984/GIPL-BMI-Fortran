@@ -405,14 +405,14 @@ contains
 
         select case(grid_id)
         case(0)
-            grid_spacing = [self%model%dy, self%model%dx]
-            bmi_status = BMI_SUCCESS
+            grid_spacing = [-1.d0]
+            bmi_status = BMI_FAILURE
         case(1)
-            grid_spacing = [self%model%dx]
-            bmi_status = BMI_SUCCESS
+            grid_spacing = [-1.d0]
+            bmi_status = BMI_FAILURE
         case(2)
-            grid_spacing = [self%model%dy, self%model%dx, self%model%dz]
-            bmi_status = BMI_SUCCESS
+            grid_spacing = [-1.d0]
+            bmi_status = BMI_FAILURE
         case default
             grid_spacing = [-1.d0]
             bmi_status = BMI_FAILURE
