@@ -636,28 +636,28 @@ contains
 
         select case(var_name)
         case("land_surface_air__temperature")
-            var_size = 1  ! 'sizeof' in gcc & ifort
+            var_size = 4
             bmi_status = BMI_SUCCESS
         case("snowpack__depth")
-            var_size = 1        ! 'sizeof' in gcc & ifort
+            var_size = 4
             bmi_status = BMI_SUCCESS
         case("snow__thermal_conductivity")
-            var_size = 1        ! 'sizeof' in gcc & ifort
+            var_size = 4
             bmi_status = BMI_SUCCESS
         case("model_soil_layer__count")
-            var_size = 1
+            var_size = 2
             bmi_status = BMI_SUCCESS
         case("soil__temperature")
-            var_size = self%model%n_z
+            var_size = 4
             bmi_status = BMI_SUCCESS
         case("soil_water__volume_fraction")
-            var_size = self%model%n_lay
+            var_size = 4
             bmi_status = BMI_SUCCESS
         case("soil_unfrozen_water__a")
-            var_size = self%model%n_lay
+            var_size = 4
             bmi_status = BMI_SUCCESS
         case("soil_unfrozen_water__b")
-            var_size = self%model%n_lay
+            var_size = 4
             bmi_status = BMI_SUCCESS
         case default
             var_size = -1
