@@ -293,8 +293,10 @@ contains
             bmi_status = BMI_SUCCESS
         case('soil_unfrozen_water__a')
             grid_id = 2
+            bmi_status = BMI_SUCCESS
         case('soil_unfrozen_water__b')
             grid_id = 2
+            bmi_status = BMI_SUCCESS
         case('soil__temperature')
             grid_id = 2
             bmi_status = BMI_SUCCESS
