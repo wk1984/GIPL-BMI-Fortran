@@ -315,7 +315,7 @@ contains
 
         select case(grid_id)
         case(0)
-            grid_type = "rectilinear"
+            grid_type = "points"
             bmi_status = BMI_SUCCESS
         case(1)
             grid_type = "scalar"
