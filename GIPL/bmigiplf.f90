@@ -319,7 +319,7 @@ contains
             grid_type = "scalar"
             bmi_status = BMI_SUCCESS
         case(2)
-            grid_type = "rectilinear"
+            grid_type = "vector"
             bmi_status = BMI_SUCCESS
         case default
             grid_type = "-"
@@ -342,7 +342,7 @@ contains
             grid_rank = 0
             bmi_status = BMI_SUCCESS
         case(2)
-            grid_rank = 3
+            grid_rank = 1
             bmi_status = BMI_SUCCESS
         case default
             grid_rank = -1
@@ -365,7 +365,7 @@ contains
             grid_shape = [1]
             bmi_status = BMI_SUCCESS
         case(2)
-            grid_shape = [self%model%n_y, self%model%n_x, self%model%n_z]
+            grid_shape = [self%model%n_z]
             bmi_status = BMI_SUCCESS
         case default
             grid_shape = [-1]
@@ -388,7 +388,7 @@ contains
             grid_size = 1
             bmi_status = BMI_SUCCESS
         case(2)
-            grid_size = self%model%n_y * self%model%n_x * self%model%n_z
+            grid_size =  self%model%n_z
             bmi_status = BMI_SUCCESS
         case default
             grid_size = -1
@@ -434,7 +434,7 @@ contains
             grid_origin = [0.d0]
             bmi_status = BMI_SUCCESS
         case(2)
-            grid_origin = [0.d0, 0.d0, 0.d0]
+            grid_origin = [0.d0]
             bmi_status = BMI_SUCCESS
         case default
             grid_origin = [-1.d0]
@@ -527,7 +527,7 @@ contains
             grid_conn = [0]
             bmi_status = BMI_SUCCESS
         case(2)
-            grid_conn = [0, 0, 0]
+            grid_conn = [0]
             bmi_status = BMI_SUCCESS
         case default
             grid_conn = [-1]
@@ -551,7 +551,7 @@ contains
             grid_offset = [0]
             bmi_status = BMI_SUCCESS
         case(2)
-            grid_offset = [0, 0, 0]
+            grid_offset = [0]
             bmi_status = BMI_SUCCESS
         case default
             grid_offset = [-1]
