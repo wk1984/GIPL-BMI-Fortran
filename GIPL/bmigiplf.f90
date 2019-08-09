@@ -293,8 +293,10 @@ contains
             bmi_status = BMI_SUCCESS
         case('soil_unfrozen_water__a')
             grid_id = 2
+            bmi_status = BMI_SUCCESS
         case('soil_unfrozen_water__b')
             grid_id = 2
+            bmi_status = BMI_SUCCESS
         case('soil__temperature')
             grid_id = 2
             bmi_status = BMI_SUCCESS
@@ -313,13 +315,13 @@ contains
 
         select case(grid_id)
         case(0)
-            grid_type = "rectilinear"
+            grid_type = "points"
             bmi_status = BMI_SUCCESS
         case(1)
             grid_type = "scalar"
             bmi_status = BMI_SUCCESS
         case(2)
-            grid_type = "three_dims"
+            grid_type = "vector"
             bmi_status = BMI_SUCCESS
         case default
             grid_type = "-"
@@ -342,7 +344,8 @@ contains
             grid_rank = 0
             bmi_status = BMI_SUCCESS
         case(2)
-            grid_rank = 3
+            grid_rank = 1
+            bmi_status = BMI_SUCCESS
         case default
             grid_rank = -1
             bmi_status = BMI_FAILURE
@@ -364,7 +367,7 @@ contains
             grid_shape = [1]
             bmi_status = BMI_SUCCESS
         case(2)
-            grid_shape = [self%model%n_y, self%model%n_x, self%model%n_z]
+            grid_shape = [self%model%n_z]
             bmi_status = BMI_SUCCESS
         case default
             grid_shape = [-1]
@@ -387,7 +390,7 @@ contains
             grid_size = 1
             bmi_status = BMI_SUCCESS
         case(2)
-            grid_size = self%model%n_y * self%model%n_x * self%model%n_z
+            grid_size =  self%model%n_z
             bmi_status = BMI_SUCCESS
         case default
             grid_size = -1
@@ -404,14 +407,14 @@ contains
 
         select case(grid_id)
         case(0)
-            grid_spacing = [self%model%dy, self%model%dx]
-            bmi_status = BMI_SUCCESS
+            grid_spacing = [-1.d0]
+            bmi_status = BMI_FAILURE
         case(1)
-            grid_spacing = [self%model%dx]
-            bmi_status = BMI_SUCCESS
+            grid_spacing = [-1.d0]
+            bmi_status = BMI_FAILURE
         case(2)
-            grid_spacing = [self%model%dy, self%model%dx, self%model%dz]
-            bmi_status = BMI_SUCCESS
+            grid_spacing = [-1.d0]
+            bmi_status = BMI_FAILURE
         case default
             grid_spacing = [-1.d0]
             bmi_status = BMI_FAILURE
@@ -433,7 +436,7 @@ contains
             grid_origin = [0.d0]
             bmi_status = BMI_SUCCESS
         case(2)
-            grid_origin = [0.d0, 0.d0, 0.d0]
+            grid_origin = [0.d0]
             bmi_status = BMI_SUCCESS
         case default
             grid_origin = [-1.d0]
@@ -526,7 +529,7 @@ contains
             grid_conn = [0]
             bmi_status = BMI_SUCCESS
         case(2)
-            grid_conn = [0, 0, 0]
+            grid_conn = [0]
             bmi_status = BMI_SUCCESS
         case default
             grid_conn = [-1]
@@ -550,7 +553,7 @@ contains
             grid_offset = [0]
             bmi_status = BMI_SUCCESS
         case(2)
-            grid_offset = [0, 0, 0]
+            grid_offset = [0]
             bmi_status = BMI_SUCCESS
         case default
             grid_offset = [-1]
@@ -635,28 +638,28 @@ contains
 
         select case(var_name)
         case("land_surface_air__temperature")
-            var_size = 1  ! 'sizeof' in gcc & ifort
+            var_size = 4
             bmi_status = BMI_SUCCESS
         case("snowpack__depth")
-            var_size = 1        ! 'sizeof' in gcc & ifort
+            var_size = 4
             bmi_status = BMI_SUCCESS
         case("snow__thermal_conductivity")
-            var_size = 1        ! 'sizeof' in gcc & ifort
+            var_size = 4
             bmi_status = BMI_SUCCESS
         case("model_soil_layer__count")
-            var_size = 1
+            var_size = 2
             bmi_status = BMI_SUCCESS
         case("soil__temperature")
-            var_size = self%model%n_z
+            var_size = 4
             bmi_status = BMI_SUCCESS
         case("soil_water__volume_fraction")
-            var_size = self%model%n_lay
+            var_size = 4
             bmi_status = BMI_SUCCESS
         case("soil_unfrozen_water__a")
-            var_size = self%model%n_lay
+            var_size = 4
             bmi_status = BMI_SUCCESS
         case("soil_unfrozen_water__b")
-            var_size = self%model%n_lay
+            var_size = 4
             bmi_status = BMI_SUCCESS
         case default
             var_size = -1
@@ -778,7 +781,10 @@ contains
         type (c_ptr) :: src
         integer :: n_elements
 
-        return
+        select case(var_name)
+        case default
+            bmi_status = BMI_FAILURE
+        end select
     end function gipl_get_ptr_float
 
     ! Get a reference to an double-valued variable, flattened.
@@ -891,6 +897,9 @@ contains
         case('soil_unfrozen_water__b')
             print*, "please use [set_value_at_indices]"
             bmi_status = BMI_FAILURE
+        case("soil__temperature")
+            self%model%temp = reshape(src, [self%model%n_site, self%model%n_z])
+            bmi_status = BMI_SUCCESS
         case default
             bmi_status = BMI_FAILURE
         end select
