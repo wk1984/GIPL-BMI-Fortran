@@ -53,15 +53,23 @@ program bmi_main
 
     type (bmi_gipl) :: model
 
+    integer :: arg_count = 0
     character*256 fconfig
 
     integer, dimension (3) :: out_grid_shape1
 
-    IF (COMMAND_ARGUMENT_COUNT() .EQ. 0) THEN
-        fconfig = 'examples/test.cfg'
-    ELSE
-        CALL GET_COMMAND_ARGUMENT(1, fconfig)
-    ENDIF
+    do while (arg_count <= 1)
+       call get_command_argument(arg_count, fconfig)
+       arg_count = arg_count + 1
+    end do
+
+    if (len_trim(fconfig) == 0 .or. trim(fconfig) == '-h' &
+         .or. trim(fconfig) == '--help') then
+       write(*,"(a)") "Usage: run_bmigipl_model CONFIGURATION_FILE"
+       write(*,"(a)")
+       write(*,"(a)") "Run GIPL through its BMI with a configuration file."
+       return
+    end if
 
     s = model%initialize(fconfig)
 
