@@ -88,7 +88,8 @@ program bmi_main
         s = model%get_end_time(end_time)
 
         ! Get soil depth variables:
-        s = model%get_var_itemsize(out_name1, soil_nodes_number)
+        s = model%get_var_grid(out_name1, out_grid_id1)
+        s = model%get_grid_size(out_grid_id1, soil_nodes_number)
         print*, 'Total soil nodes:', soil_nodes_number
 
         allocate(soil_temperature(soil_nodes_number))
