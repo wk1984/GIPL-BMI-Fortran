@@ -56,7 +56,7 @@ program bmi_main
     integer :: arg_count = 0
     character*256 fconfig
 
-    integer, dimension (3) :: out_grid_shape1
+    integer, dimension (1) :: out_grid_shape1
 
     do while (arg_count <= 1)
        call get_command_argument(arg_count, fconfig)
