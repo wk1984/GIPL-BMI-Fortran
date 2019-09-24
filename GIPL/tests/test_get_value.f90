@@ -24,6 +24,11 @@ program test_get_value
      stop BMI_FAILURE
   end if
   
+  retcode = test4()
+  if (retcode.ne.BMI_SUCCESS) then
+     stop BMI_FAILURE
+  end if  
+  
 contains
 
   ! Test getting plate_surface__temperature.
@@ -106,5 +111,34 @@ contains
        end if
     end do
   end function test3
+
+  ! Test getting soil thermal conductivity.
+  function test4() result(code)
+    character (len=*), parameter :: &
+         var_name = "soil__thermal_conductivity__thawed"
+    integer, parameter :: size = 6
+    real :: tval(size)
+    real :: expected(size)
+    integer :: i, code
+    
+    expected = [1.05, 0.812, 1.21, 1.42, 1.78, 2.45]
+
+    status = m%initialize(config_file)
+    status = m%get_value(var_name, tval)
+    status = m%finalize()
+    
+    print *, abs(tval(1) - expected(1))
+
+    ! Visual inspection.
+    write(*,*) "Test 4"
+
+    code = BMI_SUCCESS
+    do i = 1, size
+       if (abs(tval(i) - expected(i)) .gt. 1E-5) then
+          code = BMI_FAILURE
+          exit
+       end if
+    end do
+  end function test4
 
 end program test_get_value
