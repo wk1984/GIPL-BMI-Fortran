@@ -16,7 +16,9 @@ program bmi_main
     character (len = *), parameter :: var_name4 = "soil_water__volume_fraction" ! VWC
     character (len = *), parameter :: var_name5 = "soil_unfrozen_water__a" ! UWC_a
     character (len = *), parameter :: var_name6 = "soil_unfrozen_water__b" ! UWC_b
-
+    character (len = *), parameter :: var_name7 = "soil__thermal_conductivity__thawed" ! K_t
+    character (len = *), parameter :: var_name8 = "soil__thermal_conductivity__frozen" ! K_f
+    
     !-------------------------------
 
     character (len = *), parameter :: out_name2 = 'model_soil_layer__count'
@@ -35,8 +37,8 @@ program bmi_main
     real :: x, obs1, obs2, obs3, obs4, obs5, obs6
 
     character(len = 10) var_unit1, var_unit2, var_unit3
-    character(len = 10) var_unit4, unit5, unit6
-    character(len = 10) unit7, unit8, unit9
+    character(len = 10) var_unit4, var_unit5, var_unit6
+    character(len = 10) var_unit7, var_unit8, var_unit9
 
     character(len = 10) out_var_unit1
 
@@ -114,7 +116,30 @@ program bmi_main
         s = model%get_var_grid(var_name4, grid_id4)
         s = model%get_grid_size(grid_id4, grid_size4)
         s = model%get_var_units(var_name4, var_unit4)
+        
+        print*, grid_id4, grid_size4, var_unit4
 
+        ! Get soil thermal conductivity
+        s = model%get_var_grid(var_name5, grid_id5)
+        s = model%get_grid_size(grid_id5, grid_size5)
+        s = model%get_var_units(var_name5, var_unit5)
+        
+        print*, grid_id5, grid_size5, var_unit5
+
+        ! Get soil thermal conductivity
+        s = model%get_var_grid(var_name6, grid_id6)
+        s = model%get_grid_size(grid_id6, grid_size6)
+        s = model%get_var_units(var_name6, var_unit6)
+        
+        print*, grid_id6, grid_size6, var_unit6
+        
+        ! Get soil thermal conductivity
+        s = model%get_var_grid(var_name7, grid_id7)
+        s = model%get_grid_size(grid_id7, grid_size7)
+        s = model%get_var_units(var_name7, var_unit7)
+        
+        print*, grid_id7, grid_size7, var_unit7
+        
         ! Get soil temperatures
         s = model%get_var_grid(out_name1, out_grid_id1)
         s = model%get_grid_rank(out_grid_id1, out_grid_rank1)
