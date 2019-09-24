@@ -83,7 +83,7 @@ module bmigiplf
             component_name = "The 1D GIPL Model"
 
     ! Exchange items
-    integer, parameter :: input_item_count = 8
+    integer, parameter :: input_item_count = 10
     integer, parameter :: output_item_count = 2
     character (len = BMI_MAX_VAR_NAME), target, &
             dimension(input_item_count) :: input_items
@@ -116,7 +116,9 @@ contains
         input_items(6) = 'soil_unfrozen_water__b'
         input_items(7) = 'soil__thermal_conductivity__thawed'
         input_items(8) = 'soil__thermal_conductivity__frozen'
-
+        input_items(9) = 'soil__volume-specific_isochoric_heat_capacity__thawed'
+        input_items(10) = 'soil__volume-specific_isochoric_heat_capacity__frozen'
+        
         names => input_items
         bmi_status = BMI_SUCCESS
 
@@ -305,6 +307,12 @@ contains
         case('soil__thermal_conductivity__frozen')
             grid_id = 2
             bmi_status = BMI_SUCCESS
+        case('soil__volume-specific_isochoric_heat_capacity__thawed')
+        	grid_id = 2
+        	bmi_status = BMI_SUCCESS
+        case('soil__volume-specific_isochoric_heat_capacity__frozen')
+        	grid_id = 2
+        	bmi_status = BMI_SUCCESS
         case('soil__temperature')
             grid_id = 2
             bmi_status = BMI_SUCCESS
@@ -606,7 +614,13 @@ contains
             bmi_status = BMI_SUCCESS            
         case("soil__thermal_conductivity__frozen") 
             var_type = "real"
-            bmi_status = BMI_SUCCESS            
+            bmi_status = BMI_SUCCESS 
+        case('soil__volume-specific_isochoric_heat_capacity__thawed')
+            var_type = "real"
+            bmi_status = BMI_SUCCESS
+        case('soil__volume-specific_isochoric_heat_capacity__frozen')
+            var_type = 'real'
+            bmi_status = BMI_SUCCESS         
         case("write_or_not")
             var_type = "integer"
             bmi_status = BMI_SUCCESS
@@ -641,6 +655,10 @@ contains
             var_units = 'W m-1 K-1'
         case("soil__thermal_conductivity__frozen") 
             var_units = 'W m-1 K-1'
+        case('soil__volume-specific_isochoric_heat_capacity__thawed')
+        	var_units = 'J m-3 K-1'
+        case('soil__volume-specific_isochoric_heat_capacity__frozen')
+        	var_units = 'J m-3 K-1'
         case default
             var_units = "-"
             bmi_status = BMI_FAILURE
@@ -685,6 +703,12 @@ contains
         case("soil__thermal_conductivity__frozen")
             var_size = 4
             bmi_status = BMI_SUCCESS
+        case('soil__volume-specific_isochoric_heat_capacity__thawed')
+        	var_size = 4
+        	bmi_status = BMI_SUCCESS
+        case('soil__volume-specific_isochoric_heat_capacity__frozen')
+        	var_size = 4
+        	bmi_status = BMI_SUCCESS
         case default
             var_size = -1
             bmi_status = BMI_FAILURE
@@ -766,6 +790,12 @@ contains
         case('soil__thermal_conductivity__frozen')
             dest = [self%model%tcon_frz]
             bmi_status = BMI_SUCCESS
+        case('soil__volume-specific_isochoric_heat_capacity__thawed')
+        	dest = [self%model%hcap_thw]
+        	bmi_status = BMI_SUCCESS
+        case('soil__volume-specific_isochoric_heat_capacity__frozen')
+        	dest = [self%model%hcap_frz]
+        	bmi_status = BMI_SUCCESS
         case default
             dest = [-1.0]
             bmi_status = BMI_FAILURE
@@ -933,6 +963,12 @@ contains
         case('soil__thermal_conductivity__frozen') ! soil layer thermal conductivity thawed/frozen
             print*, "please use [set_value_at_indices]"
             bmi_status = BMI_FAILURE
+        case('soil__volume-specific_isochoric_heat_capacity__thawed')
+            print*, "please use [set_value_at_indices]"
+            bmi_status = BMI_FAILURE        
+        case('soil__volume-specific_isochoric_heat_capacity__frozen')
+            print*, "please use [set_value_at_indices]"
+            bmi_status = BMI_FAILURE 
         case("soil__temperature")
             self%model%temp = reshape(src, [self%model%n_site, self%model%n_z])
             bmi_status = BMI_SUCCESS
@@ -1013,6 +1049,18 @@ contains
         case("soil__thermal_conductivity__frozen")
             if (maxval(indices) .le. self%model%n_lay) then
                 self%model%tcon_frz(indices, 1) = src(:)
+            else
+                bmi_status = BMI_FAILURE
+            end if
+        case('soil__volume-specific_isochoric_heat_capacity__frozen')
+            if (maxval(indices) .le. self%model%n_lay) then
+                self%model%hcap_frz(indices, 1) = src(:)
+            else
+                bmi_status = BMI_FAILURE
+            end if        
+        case('soil__volume-specific_isochoric_heat_capacity__thawed')
+            if (maxval(indices) .le. self%model%n_lay) then
+                self%model%hcap_thw(indices, 1) = src(:)
             else
                 bmi_status = BMI_FAILURE
             end if
