@@ -28,6 +28,11 @@ program test_get_value
   if (retcode.ne.BMI_SUCCESS) then
      stop BMI_FAILURE
   end if  
+
+  retcode = test5()
+  if (retcode.ne.BMI_SUCCESS) then
+     stop BMI_FAILURE
+  end if  
   
 contains
 
@@ -140,5 +145,35 @@ contains
        end if
     end do
   end function test4
+
+  ! Test getting soil thermal conductivity.
+  function test5() result(code)
+    character (len=*), parameter :: &
+         var_name = "soil__volume-specific_isochoric_heat_capacity__thawed"
+    integer, parameter :: size = 6
+    real :: tval(size)
+    real :: expected(size)
+    integer :: i, code
+    
+    expected = [2000000., 2600000., 2600000., 2900000., 3100000., 3000000.]
+    expected = expected * 0.09375
+
+    status = m%initialize(config_file)
+    status = m%get_value(var_name, tval)
+    status = m%finalize()
+    
+    write(*,*) tval(1), expected(1), abs(tval(1) - expected(1))
+
+    ! Visual inspection.
+    write(*,*) "Test 5"
+
+    code = BMI_SUCCESS
+    do i = 1, size
+       if (abs(tval(i) - expected(i)) .gt. 1E-5) then
+          code = BMI_FAILURE
+          exit
+       end if
+    end do
+  end function test5
 
 end program test_get_value
