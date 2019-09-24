@@ -213,6 +213,12 @@ program bmi_main
 
             end if
 
+            if (i .eq. 110) then ! change soil thermal conductivity at the 110th time step.
+
+                !s = model%set_value_at_indices('soil__thermal_conductivity__frozen', [3],[0.5])
+
+            end if
+
             s = model%get_value(var_name1, temperature)
             s = model%get_value(var_name2, snow_depth)
             s = model%get_value(var_name3, snow_conductivity)
