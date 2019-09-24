@@ -6,10 +6,10 @@ program test_get_input_var_names
 
   implicit none
 
-  integer, parameter :: n_inputs = 6
+  integer, parameter :: n_inputs = 8
   type (bmi_gipl) :: m
   character (len=BMI_MAX_VAR_NAME), allocatable :: expected(:)
-  character (len=BMI_MAX_VAR_NAME) :: e1, e2, e3, e4, e5, e6, e7
+  character (len=BMI_MAX_VAR_NAME) :: e1, e2, e3, e4, e5, e6, e7, e8
   character (len=BMI_MAX_VAR_NAME), pointer :: names(:)
   integer :: i
 
@@ -20,8 +20,10 @@ program test_get_input_var_names
   e4 = "soil_water__volume_fraction"
   e5 = "soil_unfrozen_water__a"
   e6 = "soil_unfrozen_water__b"
+  e7 = "soil__thermal_conductivity__thawed"
+  e8 = "soil__thermal_conductivity__frozen"
   
-  expected = [e1,e2,e3,e4,e5,e6]
+  expected = [e1,e2,e3,e4,e5,e6,e7,e8]
   
   status = m%get_input_var_names(names)
   
