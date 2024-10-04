@@ -290,7 +290,7 @@ contains
                 enddo
                 call interpolate(utemp_time, utemp(:, i_site), n_temp, utemp_time_i, utemp_i(:, i_site), n_time + 2)
                 call interpolate(snd_time, snd(:, i_site), n_snow, utemp_time_i, snd_i(:, i_site), n_time + 2)
-                call snowfix(model, utemp_i(:, i_site), snd_i(:, i_site), n_time + 2)
+                call snowfix(utemp_i(:, i_site), snd_i(:, i_site), n_time + 2)
                 call interpolate(stcon_time, stcon(:, i_site), n_stcon, utemp_time_i, stcon_i(:, i_site), n_time + 2)
             enddo
 
