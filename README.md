@@ -22,7 +22,6 @@
 > `mkdir _build && cd _build`  
 > `cmake .. -DCMAKE_INSTALL_PREFIX=[install_path]`  
 > `make install`  
-> `source ../scripts/update_rpaths.sh`  
 > `ctest`
 > 
 
