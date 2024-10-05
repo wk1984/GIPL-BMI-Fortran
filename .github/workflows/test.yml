@@ -90,5 +90,5 @@ jobs:
       - name: Test
         working-directory: ${{ github.workspace }}/build
         run: |
-          if ( -not ( Test-Path -Path ${{ env.LIBRARY_PREFIX }}\lib\libbmigiplf.a ) ){ exit 1 }
           ctest
+          if ( -not ( Test-Path -Path ${{ env.LIBRARY_PREFIX }}\lib\libbmigiplf.a ) ){ exit 1 }
