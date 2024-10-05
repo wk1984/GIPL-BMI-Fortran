@@ -2,7 +2,7 @@
 
 #### This is to develop a BMI for GIPL with FORTRAN. Original GIPL code is avaiable at [this repository](https://github.com/Elchin/GIPL).
 
-[![Build Status](https://travis-ci.org/permamodel/GIPL-BMI-Fortran.svg?branch=master)](https://travis-ci.org/permamodel/GIPL-BMI-Fortran)
+[![Test](https://github.com/permamodel/GIPL-BMI-Fortran/actions/workflows/test.yml/badge.svg)](https://github.com/permamodel/GIPL-BMI-Fortran/actions/workflows/test.yml)
 
 #### **NOTE: Currently, it is only 1D version. More works are required for the spatial version**
 
