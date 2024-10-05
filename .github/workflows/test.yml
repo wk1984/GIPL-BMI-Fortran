@@ -1,0 +1,55 @@
+name: Test
+
+on: [push, pull_request]
+
+env:
+  BMI_VERSION: 1_2
+
+jobs:
+  build-on-unix:
+
+    if:
+      github.event_name == 'push' || github.event.pull_request.head.repo.full_name !=
+      github.repository
+
+    runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    env:
+      SHLIB_EXT: ${{ matrix.os == 'ubuntu-latest' && '.so' || '.dylib' }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+ 
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: mamba-org/setup-micromamba@v2
+        with:
+          micromamba-version: latest
+          environment-name: testing
+          create-args: >-
+            make
+            cmake
+            fortran-compiler
+
+      - name: Make build directory
+        run: cmake -E make_directory build
+
+      - name: Configure
+        working-directory: ${{ github.workspace }}/build
+        run: cmake .. -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build and install
+        working-directory: ${{ github.workspace }}/build
+        run: cmake --build . --target install --config Release
+
+      - name: Test
+        working-directory: ${{ github.workspace }}/build
+        run: |
+          test -h $CONDA_PREFIX/lib/libbmigiplf${{ env.SHLIB_EXT }}
+          ctest
