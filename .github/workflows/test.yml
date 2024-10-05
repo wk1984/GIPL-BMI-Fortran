@@ -90,6 +90,6 @@ jobs:
       - name: Test
         working-directory: ${{ github.workspace }}/build
         run: |
-          Test-Path -Path ${{ env.LIBRARY_PREFIX }}\lib\libbmigiplf.dll.a
-          Test-Path -Path ${{ env.LIBRARY_PREFIX }}\bin\libbmigiplf.dll
+          if ( -not ( Test-Path -Path ${{ env.LIBRARY_PREFIX }}\lib\libbmigiplf.dll.a ) ){ exit 1 }
+          if ( -not ( Test-Path -Path ${{ env.LIBRARY_PREFIX }}\bin\libbmigiplf.dll ) ){ exit 1 }
           ctest
