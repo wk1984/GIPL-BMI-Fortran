@@ -53,3 +53,42 @@ jobs:
         run: |
           test -h $CONDA_PREFIX/lib/libbmigiplf${{ env.SHLIB_EXT }}
           ctest
+
+  build-on-windows:
+
+    if:
+      github.event_name == 'push' || github.event.pull_request.head.repo.full_name !=
+      github.repository
+
+    runs-on: windows-latest
+
+    env:
+      LIBRARY_PREFIX: $env:CONDA_PREFIX\Library
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: mamba-org/setup-micromamba@v2
+        with:
+          micromamba-version: latest
+          environment-name: testing
+          create-args: >-
+            cmake
+            cxx-compiler
+          init-shell: >-
+            powershell
+
+      - name: Make cmake build directory
+        run: cmake -E make_directory build
+
+      - name: Configure, build, and install
+        working-directory: ${{ github.workspace }}/build
+        run: |
+          cmake .. -G "NMake Makefiles" -DCMAKE_INSTALL_PREFIX="${{ env.LIBRARY_PREFIX }}" -DCMAKE_BUILD_TYPE=Release
+          cmake --build . --target install --config Release
+
+      - name: Test
+        working-directory: ${{ github.workspace }}/build
+        run: |
+          if ( -not ( Test-Path -Path ${{ env.LIBRARY_PREFIX }}\lib\libbmigiplf.a ) ){ exit 1 }
+          ctest
