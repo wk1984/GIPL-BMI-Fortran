@@ -4,6 +4,7 @@ project(bmigipl Fortran)
 
 include(GNUInstallDirs)
 
+set(model_name gipl_model)
 set(bmi_major_version 1)
 set(bmi_minor_version 2)
 set(bmi_version ${bmi_major_version}.${bmi_minor_version})
