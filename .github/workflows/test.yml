@@ -46,7 +46,7 @@ jobs:
       - name: Test
         run: |
           test -h $CONDA_PREFIX/lib/libbmigiplf${{ env.SHLIB_EXT }}
-          ctest
+          ctest --test-dir _build
 
   build-on-windows:
 
@@ -83,4 +83,4 @@ jobs:
         run: |
           if ( -not ( Test-Path -Path ${{ env.LIBRARY_PREFIX }}\lib\libbmigiplf.dll.a ) ){ exit 1 }
           if ( -not ( Test-Path -Path ${{ env.LIBRARY_PREFIX }}\bin\libbmigiplf.dll ) ){ exit 1 }
-          ctest
+          ctest --test-dir _build
