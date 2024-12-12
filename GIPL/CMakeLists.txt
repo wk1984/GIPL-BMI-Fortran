@@ -1,8 +1,9 @@
 set(pkg_name gipl_model)
 
-add_library(${bmigipl_lib} SHARED gipl.f90 bmigiplf.f90 bmi.f90)
+add_library(gipl OBJECT gipl.f90)
+add_library(${bmigipl_lib} SHARED bmigiplf.f90 bmi.f90 $<TARGET_OBJECTS:gipl>)
 
-add_executable(run_${pkg_name} gipl.f90 main.f90)
+add_executable(run_${pkg_name} main.f90 $<TARGET_OBJECTS:gipl>)
 add_executable(run_bmi${pkg_name} bmi_main.f90)
 target_link_libraries(run_bmi${pkg_name} ${bmigipl_lib})
 
