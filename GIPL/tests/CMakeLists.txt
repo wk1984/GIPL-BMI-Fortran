@@ -6,9 +6,8 @@ add_library(fixtures OBJECT fixtures.f90)
 
 function(make_test test_name)
   add_test(NAME ${test_name} COMMAND ${test_name})
-  set(src_${test_name} ${test_name}.f90 $<TARGET_OBJECTS:fixtures>)
-  add_executable(${test_name} ${src_${test_name}})
-  target_link_libraries(${test_name} ${bmi_lib} ${bmigipl_lib})
+  add_executable(${test_name} ${test_name}.f90 $<TARGET_OBJECTS:fixtures>)
+  target_link_libraries(${test_name} ${bmigipl_lib})
 endfunction(make_test)
 
 make_test(test_get_component_name)
