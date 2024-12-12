@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 env:
   BMI_VERSION: 1_2
+  BUILD_DIR: _build
 
 jobs:
   build-on-unix:
@@ -38,15 +39,15 @@ jobs:
             fortran-compiler
 
       - name: Configure project
-        run: cmake -B _build -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX -DCMAKE_BUILD_TYPE=Release
+        run: cmake -B ${{ env.BUILD_DIR }} -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX -DCMAKE_BUILD_TYPE=Release
 
       - name: Build and install
-        run: cmake --build _build --target install --config Release
+        run: cmake --build ${{ env.BUILD_DIR }} --target install --config Release
 
       - name: Test
         run: |
           test -h $CONDA_PREFIX/lib/libbmigiplf${{ env.SHLIB_EXT }}
-          ctest --test-dir _build
+          ctest --test-dir ${{ env.BUILD_DIR }}
 
   build-on-windows:
 
@@ -79,12 +80,12 @@ jobs:
 
       - name: Configure, build, and install project
         run: |
-          cmake -B _build -G Ninja -DCMAKE_INSTALL_PREFIX="${{ env.LIBRARY_PREFIX }}" -DCMAKE_BUILD_TYPE=Release
-          cmake --build _build --target install --config Release
+          cmake -B ${{ env.BUILD_DIR }} -G Ninja -DCMAKE_INSTALL_PREFIX="${{ env.LIBRARY_PREFIX }}" -DCMAKE_BUILD_TYPE=Release
+          cmake --build ${{ env.BUILD_DIR }} --target install --config Release
 
       - name: Test
         run: |
           if ( -not ( Test-Path -Path ${{ env.LIBRARY_PREFIX }}\bin\run_bmigipl_model.exe ) ){ exit 1 }
           if ( -not ( Test-Path -Path ${{ env.LIBRARY_PREFIX }}\lib\bmigiplf.lib ) ){ exit 1 }
           if ( -not ( Test-Path -Path ${{ env.LIBRARY_PREFIX }}\include\bmigiplf.mod ) ){ exit 1 }
-          ctest --test-dir _build
+          ctest --test-dir ${{ env.BUILD_DIR }}
