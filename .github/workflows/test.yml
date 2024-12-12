@@ -84,6 +84,7 @@ jobs:
 
       - name: Test
         run: |
-          if ( -not ( Test-Path -Path ${{ env.LIBRARY_PREFIX }}\lib\libbmigiplf.dll.a ) ){ exit 1 }
-          if ( -not ( Test-Path -Path ${{ env.LIBRARY_PREFIX }}\bin\libbmigiplf.dll ) ){ exit 1 }
+          if ( -not ( Test-Path -Path ${{ env.LIBRARY_PREFIX }}\bin\run_bmigipl_model.exe ) ){ exit 1 }
+          if ( -not ( Test-Path -Path ${{ env.LIBRARY_PREFIX }}\lib\bmigiplf.lib ) ){ exit 1 }
+          if ( -not ( Test-Path -Path ${{ env.LIBRARY_PREFIX }}\include\bmigiplf.mod ) ){ exit 1 }
           ctest --test-dir _build
