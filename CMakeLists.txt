@@ -1,6 +1,10 @@
+# GIPL
+
 cmake_minimum_required(VERSION 3.12)
 
-project(bmigipl Fortran)
+project(bmigipl
+  LANGUAGES Fortran
+)
 
 include(GNUInstallDirs)
 

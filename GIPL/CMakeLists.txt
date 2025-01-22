@@ -2,9 +2,9 @@ set(pkg_name gipl_model)
 
 add_library(gipl OBJECT gipl.f90)
 if(WIN32)
-  add_library(${bmigipl_lib} STATIC bmigiplf.f90 bmi.f90 $<TARGET_OBJECTS:gipl>)
+  add_library(${bmigipl_lib} STATIC bmigiplf.f90 $<TARGET_OBJECTS:gipl>)
 else()
-  add_library(${bmigipl_lib} SHARED bmigiplf.f90 bmi.f90 $<TARGET_OBJECTS:gipl>)
+  add_library(${bmigipl_lib} SHARED bmigiplf.f90 $<TARGET_OBJECTS:gipl>)
 endif()
 
 add_executable(run_${pkg_name} main.f90 $<TARGET_OBJECTS:gipl>)
